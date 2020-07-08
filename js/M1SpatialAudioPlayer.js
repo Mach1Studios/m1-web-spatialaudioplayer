@@ -235,12 +235,12 @@ function DisplayDebug() {
 let m1Decode = null;
 let m1DecodeModule = Mach1DecodeModule();
 // initialize Mach1 Spatial module with initial setup settings
-m1DecodeModule.onInited = function() {
+Mach1DecodeModule().then(function(m1DecodeModule) {
     m1Decode = new m1DecodeModule.Mach1Decode();
     m1Decode.setPlatformType(m1Decode.Mach1PlatformType.Mach1PlatformDefault);
     m1Decode.setDecodeAlgoType(m1Decode.Mach1DecodeAlgoType.Mach1DecodeAlgoSpatial);
     m1Decode.setFilterSpeed(0.9);
-};
+});
 
 var audioFiles8 = ["audio/m1spatial/T1.ogg", "audio/m1spatial/T2.ogg", "audio/m1spatial/T3.ogg", "audio/m1spatial/T4.ogg", "audio/m1spatial/B5.ogg", "audio/m1spatial/B6.ogg", "audio/m1spatial/B7.ogg", "audio/m1spatial/B8.ogg"];
 

@@ -53,12 +53,14 @@ function setupDatGui() {
     gui.add(controls, "oneEuroFilterBeta", 0.05, 0.1).onChange(function(value) {
         createOneEuroFilters();
     });
+    gui.close();
 }
 
 function radians_to_degrees(radians) {
     return radians * (180 / Math.PI);
 }
 
+//TODO: Apply isMobile returned bools to Device modes
 function isMobile() {
     const isAndroid = /Android/i.test(navigator.userAgent);
     const isiOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -212,11 +214,27 @@ document.addEventListener('DOMContentLoaded', (event) => {
     trackerMain();
 })
 
-// ------------------------
-// audio part
-let m1Decode = null;
+function DisplayDebug() {
+  var output = document.getElementById("3dview");
+  if (output.style.display === "none") {
+    output.style.display = "";
+  } else {
+    output.style.display = "none";
+  }
+  var video = document.getElementById("output");
+  if (video.style.display === "none") {
+    video.style.display = "";
+  } else {
+    video.style.display = "none";
+  }
+} 
 
+// ------------------------
+// Mach1 Spatial & Audio Handling
+
+let m1Decode = null;
 let m1DecodeModule = Mach1DecodeModule();
+// initialize Mach1 Spatial module with initial setup settings
 m1DecodeModule.onInited = function() {
     m1Decode = new m1DecodeModule.Mach1Decode();
     m1Decode.setPlatformType(m1Decode.Mach1PlatformType.Mach1PlatformDefault);
@@ -255,14 +273,14 @@ function Stop() {
 
 
 // ------------------------
-// OSC part
+// OSC Handling
 const osc = new OSC();
 osc.open({
     port: 9898
 });
 
 // ------------------------
-// render part adopted from https://threejs.org/examples/webgl_materials_normalmap.html
+// Visual rendering adopted from https://threejs.org/examples/webgl_materials_normalmap.html
 var container, stats, loader;
 var camera, scene, renderer;
 var mesh, pivot;
@@ -298,7 +316,6 @@ window.createOneEuroFilters = function createOneEuroFilters() {
 
 function init() {
     container = document.getElementById("3dview"); //document.createElement("div");
-    //document.body.appendChild(container);
 
     camera = new THREE.PerspectiveCamera(27, width / height, 1, 10000);
     camera.position.z = 2500;
@@ -335,9 +352,7 @@ function init() {
     renderer.setSize(width, height);
     container.appendChild(renderer.domElement);
 
-    //
     stats = new Stats();
-    //container.appendChild(stats.dom);
 
     // COMPOSER
     renderer.autoClear = false;
@@ -399,12 +414,26 @@ function animate() {
     render();
     stats.update();
 
+    // Apply orientation to decode Mach1 Spatial to Stereo
     Decode(yaw, pitch, roll);
+    // Apply orientation (yaw) to compass UI
+    compass.style.transform = `rotate(${yaw}deg)`;
 
+    // Check and reconnect OSC
+    // Apply orientation as output OSC messages
     if (osc.status() == OSC.STATUS.IS_OPEN) {
+        /*
+        Receive OSC message with address "/orientation" and three float arguements
+
+        Yaw (left -> right | where rotating left is negative)
+        Pitch (down -> up | where rotating down is negative)
+        Roll (top-pointing-left -> top-pointing-right | where rotating top of object left is negative)
+
+        */
         osc.send(new OSC.Message("/orientation", yaw, pitch, roll));
     } else if (osc.status() == OSC.STATUS.IS_CLOSED) {
         osc.open({
+            //TODO: custom port output
             port: 9898
         });
     }

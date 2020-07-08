@@ -16,7 +16,7 @@ fi
 
 mkdir -p audio/m1spatial
 
-cd ../m1spatial
+cd audio/m1spatial
 wget http://dev.mach1.xyz/mach1-sdk-sample-audio/web/m1spatial/T1.ogg
 wget http://dev.mach1.xyz/mach1-sdk-sample-audio/web/m1spatial/T2.ogg
 wget http://dev.mach1.xyz/mach1-sdk-sample-audio/web/m1spatial/T3.ogg

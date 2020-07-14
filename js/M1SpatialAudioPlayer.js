@@ -21,7 +21,7 @@ function handleDeviceOrientation(event) {
     var z = event.gamma;
     console.log(x, y, z);
 
-    if (window.modeTracker == "facetracker") {
+    if (window.modeTracker == "device") {
         window.yaw = x;
         window.pitch = y;
         window.roll = z;

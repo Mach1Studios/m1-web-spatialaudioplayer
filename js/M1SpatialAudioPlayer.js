@@ -21,7 +21,7 @@ function handleDeviceOrientation(event) {
     var z = event.gamma;
     console.log(x, y, z);
 
-    if (window.modeTracker == "facetracker") {
+    if (window.modeTracker == "device") {
         window.yaw = x;
         window.pitch = y;
         window.roll = z;
@@ -91,11 +91,18 @@ async function setupCamera() {
     });
 }
 
+let faceWidthSaved = -1.0;
+
 async function renderPrediction() {
     const predictions = await model.estimateFaces(video);
     ctx.drawImage(video, 0, 0, videoWidth, videoHeight, 0, 0, canvas.width, canvas.height);
 
     document.getElementById("stats").innerHTML = "";
+	
+	if (predictions.length == 0) {
+		faceWidthSaved = -1.0;
+	}
+	
     if (predictions.length > 0) {
         predictions.forEach((prediction) => {
             try {
@@ -163,10 +170,20 @@ async function renderPrediction() {
             pitchOptimized = pitch * parseFloat(controls.pitchMultiplier);
             rollOptimized = roll * parseFloat(controls.rollMultiplier);
 
+			
+
+			let faceWidth = prediction.boundingBox.bottomRight[0][1] - prediction.boundingBox.topLeft[0][1];
+			if(faceWidthSaved < 0) faceWidthSaved = faceWidth;
+			
+			let volumeStereo = map(faceWidth, faceWidthSaved * 0.5, faceWidthSaved * 1.5, 0.0, 1.0);
+			//console.log("volumeStereo: ", volumeStereo );
+
             if (window.modeTracker == "facetracker") {
                 window.yaw = yawOptimized;
                 window.pitch = pitchOptimized;
                 window.roll = rollOptimized;
+				
+				soundPlayerStereo.updateVolumes([volumeStereo,volumeStereo]);
             }
         });
     }
@@ -242,10 +259,11 @@ Mach1DecodeModule().then(function(m1DecodeModule) {
     m1Decode.setFilterSpeed(0.9);
 });
 
-var audioFiles8 = ["audio/m1spatial/T1.ogg", "audio/m1spatial/T2.ogg", "audio/m1spatial/T3.ogg", "audio/m1spatial/T4.ogg", "audio/m1spatial/B5.ogg", "audio/m1spatial/B6.ogg", "audio/m1spatial/B7.ogg", "audio/m1spatial/B8.ogg"];
+let soundPlayer = new Mach1SoundPlayer();
+soundPlayer.setup(["audio/m1spatial/T1.ogg", "audio/m1spatial/T2.ogg", "audio/m1spatial/T3.ogg", "audio/m1spatial/T4.ogg", "audio/m1spatial/B5.ogg", "audio/m1spatial/B6.ogg", "audio/m1spatial/B7.ogg", "audio/m1spatial/B8.ogg"]);
 
-let sound = new Mach1SoundPlayer();
-sound.setup(audioFiles8);
+let soundPlayerStereo = new Mach1SoundPlayer();
+soundPlayerStereo.setup(["audio/m1stereo/sample.ogg"]);
 
 function Decode(yaw, pitch, roll) {
     if (m1Decode != null && yaw != null && pitch != null && roll != null) {
@@ -254,7 +272,7 @@ function Decode(yaw, pitch, roll) {
         let decoded = m1Decode.decode(yaw, pitch, roll);
         m1Decode.endBuffer();
 
-        sound.updateVolumes(decoded);
+        soundPlayer.updateVolumes(decoded);
 
         var strDebug = "";
         decoded.forEach(function(d) {
@@ -264,11 +282,15 @@ function Decode(yaw, pitch, roll) {
 }
 
 function Play() {
-    sound.play();
+    soundPlayer.play();
+	 if (window.modeTracker == "facetracker") {
+		 soundPlayerStereo.play();
+	 }
 }
 
 function Stop() {
-    sound.stop();
+    soundPlayer.stop();
+	soundPlayerStereo.stop();
 }
 
 

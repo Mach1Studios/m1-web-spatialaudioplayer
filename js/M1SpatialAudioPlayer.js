@@ -254,7 +254,7 @@ function Decode(yaw, pitch, roll) {
         let decoded = m1Decode.decode(yaw, pitch, roll);
         m1Decode.endBuffer();
 
-        sound.updateVolumes(decoded);
+        sound.updateGains(decoded);
 
         var strDebug = "";
         decoded.forEach(function(d) {

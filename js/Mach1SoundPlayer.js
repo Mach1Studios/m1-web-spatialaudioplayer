@@ -1,7 +1,5 @@
 "use strict";
 
-require('promise-decode-audio-data');
-
 let _soundPlayer_preloadCache = {};
 let _soundPlayer_audioCtx = new AudioContext();
 
@@ -285,5 +283,3 @@ function Mach1SoundPlayer() {
 
     return this;
 }
-
-module.exports = Mach1SoundPlayer;

@@ -175,15 +175,15 @@ async function renderPrediction() {
 			let faceWidth = prediction.boundingBox.bottomRight[0][1] - prediction.boundingBox.topLeft[0][1];
 			if(faceWidthSaved < 0) faceWidthSaved = faceWidth;
 			
-			let volumeStereo = map(faceWidth, faceWidthSaved * 0.5, faceWidthSaved * 1.5, 0.0, 1.0);
-			//console.log("volumeStereo: ", volumeStereo );
+			let gainProximityStereo = map(faceWidth, faceWidthSaved * 0.5, faceWidthSaved * 1.5, 0.0, 1.0);
+			console.log("Proximity Stereo Gain: ", gainProximityStereo );
 
             if (window.modeTracker == "facetracker") {
                 window.yaw = yawOptimized;
                 window.pitch = pitchOptimized;
                 window.roll = rollOptimized;
 				
-				soundPlayerStereo.updateVolumes([volumeStereo,volumeStereo]);
+				soundPlayerStereo.updateGains([gainProximityStereo,gainProximityStereo]);
             }
         });
     }
@@ -272,7 +272,7 @@ function Decode(yaw, pitch, roll) {
         let decoded = m1Decode.decode(yaw, pitch, roll);
         m1Decode.endBuffer();
 
-        soundPlayer.updateVolumes(decoded);
+        soundPlayer.updateGains(decoded);
 
         var strDebug = "";
         decoded.forEach(function(d) {

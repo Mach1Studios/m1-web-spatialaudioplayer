@@ -91,12 +91,13 @@ async function setupCamera() {
 }
 
 let faceWidthSaved = -1.0;
+var faceDistance = 1.0;
+var faceDistanceFar = 0.0;
 
 // Convert from degrees to radians.
 Math.radians = function(degrees) {
     return degrees * Math.PI / 180;
 }
-Math.radians(90); // 1.5707963267948966
 
 // Convert from radians to degrees.
 Math.degrees = function(radians) {
@@ -184,42 +185,13 @@ async function renderPrediction() {
 			let faceWidth = prediction.boundingBox.bottomRight[0][1] - prediction.boundingBox.topLeft[0][1];
 			if(faceWidthSaved < 0) faceWidthSaved = faceWidth;
 			
-			let gainProximityStereo = map(faceWidth, faceWidthSaved * 0.5, faceWidthSaved * 1.5, 0.0, 1.0);
+			faceDistance = map(faceWidth, faceWidthSaved * 0.5, faceWidthSaved * 1.5, 0.0, 1.0);
 
             // FACE ORIENTATION TRACKER
             if (window.modeTracker == "facetracker") {
                 window.yaw = yawOptimized;
                 window.pitch = pitchOptimized;
                 window.roll = rollOptimized;
-				
-                // STEREO OBJECT PANNER
-                let azimuth = yawOptimized;
-                // Clamp azimuth to allowed range of -180 -> +180.
-                azimuth = Math.max(-180.0, azimuth);
-                azimuth = Math.min(180.0, azimuth);
-                
-                // Alias the azimuth ranges behind us to in front of us:
-                if (azimuth < -90){
-                    azimuth = -180 - azimuth;
-                }
-                else if (azimuth > 90){
-                    azimuth = 180 - azimuth;
-                }
-
-                if (azimuth <= 0) { // from -90 -> 0
-                    // transforming the "azimuth" value from -90 -> 0 degrees into the range -90 -> +90.
-                    azimuth = (azimuth + 90) / 90;
-                } else { // from 0 -> +90
-                    // transforming the "azimuth" value from 0 -> +90 degrees into the range -90 -> +90.
-                    azimuth = azimuth / 90;
-                }
-
-                let gainProximityL = Math.sqrt(2)/2 * (Math.cos(azimuth) - Math.sin(azimuth)) * gainProximityStereo;
-                let gainProximityR = Math.sqrt(2)/2 * (Math.cos(azimuth) + Math.sin(azimuth)) * gainProximityStereo;
-                console.log("YAW: ", azimuth);
-                console.log("Proximity Left Gain: ", gainProximityL);
-                console.log("Proximity Right Gain: ", gainProximityR);
-				soundPlayerStereo.updateGains([gainProximityL,gainProximityR]);
             }
         });
     }
@@ -294,11 +266,11 @@ Mach1DecodeModule().then(function(m1DecodeModule) {
     m1Decode.setFilterSpeed(0.9);
 });
 
-let soundPlayer = new Mach1SoundPlayer();
-soundPlayer.setup(["audio/m1spatial/T1.ogg", "audio/m1spatial/T2.ogg", "audio/m1spatial/T3.ogg", "audio/m1spatial/T4.ogg", "audio/m1spatial/B5.ogg", "audio/m1spatial/B6.ogg", "audio/m1spatial/B7.ogg", "audio/m1spatial/B8.ogg"]);
+let m1SoundPlayerClose = new Mach1SoundPlayer();
+m1SoundPlayerClose.setup(["audio/m1spatialclose/T1.ogg", "audio/m1spatialclose/T2.ogg", "audio/m1spatialclose/T3.ogg", "audio/m1spatialclose/T4.ogg", "audio/m1spatialclose/B5.ogg", "audio/m1spatialclose/B6.ogg", "audio/m1spatialclose/B7.ogg", "audio/m1spatialclose/B8.ogg"]);
 
-let soundPlayerStereo = new Mach1SoundPlayer();
-soundPlayerStereo.setup(["audio/m1stereo/sample.ogg"]);
+let m1SoundPlayerFar = new Mach1SoundPlayer();
+m1SoundPlayerFar.setup(["audio/m1spatialfar/T1.ogg", "audio/m1spatialfar/T2.ogg", "audio/m1spatialfar/T3.ogg", "audio/m1spatialfar/T4.ogg", "audio/m1spatialfar/B5.ogg", "audio/m1spatialfar/B6.ogg", "audio/m1spatialfar/B7.ogg", "audio/m1spatialfar/B8.ogg"]);
 
 function Decode(yaw, pitch, roll) {
     if (m1Decode != null && yaw != null && pitch != null && roll != null) {
@@ -307,7 +279,10 @@ function Decode(yaw, pitch, roll) {
         let decoded = m1Decode.decode(yaw, pitch, roll);
         m1Decode.endBuffer();
 
-        soundPlayer.updateGains(decoded);
+        // APPLY DISTANCE CROSSFADE BETWEEN TWO MACH1SPATIAL MIXES
+        window.faceDistanceFar = Math.abs(window.faceDistance - 1.0);
+        m1SoundPlayerClose.updateGains(decoded.map(x => x * window.faceDistance));
+        m1SoundPlayerFar.updateGains(decoded.map(x => x * window.faceDistanceFar));
 
         var strDebug = "";
         decoded.forEach(function(d) {
@@ -317,15 +292,15 @@ function Decode(yaw, pitch, roll) {
 }
 
 function Play() {
-    soundPlayer.play();
+    m1SoundPlayerClose.play();
 	 if (window.modeTracker == "facetracker") {
-		 soundPlayerStereo.play();
+		 m1SoundPlayerFar.play();
 	 }
 }
 
 function Stop() {
-    soundPlayer.stop();
-	soundPlayerStereo.stop();
+    m1SoundPlayerClose.stop();
+	m1SoundPlayerFar.stop();
 }
 
 

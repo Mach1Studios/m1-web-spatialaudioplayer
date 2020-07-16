@@ -372,6 +372,7 @@ window.createOneEuroFilters = function createOneEuroFilters() {
 };
 
 function init() {
+    mainWindow = document.getElementById("main");
     container = document.getElementById("3dview"); //document.createElement("div");
 
     camera = new THREE.PerspectiveCamera(27, width / height, 1, 10000);
@@ -419,7 +420,7 @@ function init() {
     composer.addPass(renderModel);
 
     // EVENTS
-    container.addEventListener("mousemove", onDocumentMouseMove, false);
+    mainWindow.addEventListener("mousemove", onDocumentMouseMove, false);
     window.addEventListener("resize", onWindowResize, false);
 
     onWindowResize();

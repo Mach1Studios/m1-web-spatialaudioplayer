@@ -27,7 +27,6 @@ function handleDeviceOrientation(event) {
         window.roll = z;
     }
 }
-
 window.addEventListener("deviceorientation", handleDeviceOrientation);
 
 // ------------------------ 
@@ -92,6 +91,17 @@ async function setupCamera() {
 }
 
 let faceWidthSaved = -1.0;
+
+// Convert from degrees to radians.
+Math.radians = function(degrees) {
+    return degrees * Math.PI / 180;
+}
+Math.radians(90); // 1.5707963267948966
+
+// Convert from radians to degrees.
+Math.degrees = function(radians) {
+    return radians * 180 / Math.PI;
+}
 
 async function renderPrediction() {
     const predictions = await model.estimateFaces(video);
@@ -170,24 +180,49 @@ async function renderPrediction() {
             pitchOptimized = pitch * parseFloat(controls.pitchMultiplier);
             rollOptimized = roll * parseFloat(controls.rollMultiplier);
 
-			
-
+            // FACE DEPTH TRACKER
 			let faceWidth = prediction.boundingBox.bottomRight[0][1] - prediction.boundingBox.topLeft[0][1];
 			if(faceWidthSaved < 0) faceWidthSaved = faceWidth;
 			
 			let gainProximityStereo = map(faceWidth, faceWidthSaved * 0.5, faceWidthSaved * 1.5, 0.0, 1.0);
-			console.log("Proximity Stereo Gain: ", gainProximityStereo );
 
+            // FACE ORIENTATION TRACKER
             if (window.modeTracker == "facetracker") {
                 window.yaw = yawOptimized;
                 window.pitch = pitchOptimized;
                 window.roll = rollOptimized;
 				
-				soundPlayerStereo.updateGains([gainProximityStereo,gainProximityStereo]);
+                // STEREO OBJECT PANNER
+                let azimuth = yawOptimized;
+                // Clamp azimuth to allowed range of -180 -> +180.
+                azimuth = Math.max(-180.0, azimuth);
+                azimuth = Math.min(180.0, azimuth);
+                
+                // Alias the azimuth ranges behind us to in front of us:
+                if (azimuth < -90){
+                    azimuth = -180 - azimuth;
+                }
+                else if (azimuth > 90){
+                    azimuth = 180 - azimuth;
+                }
+
+                if (azimuth <= 0) { // from -90 -> 0
+                    // transforming the "azimuth" value from -90 -> 0 degrees into the range -90 -> +90.
+                    azimuth = (azimuth + 90) / 90;
+                } else { // from 0 -> +90
+                    // transforming the "azimuth" value from 0 -> +90 degrees into the range -90 -> +90.
+                    azimuth = azimuth / 90;
+                }
+
+                let gainProximityL = Math.sqrt(2)/2 * (Math.cos(azimuth) - Math.sin(azimuth)) * gainProximityStereo;
+                let gainProximityR = Math.sqrt(2)/2 * (Math.cos(azimuth) + Math.sin(azimuth)) * gainProximityStereo;
+                console.log("YAW: ", azimuth);
+                console.log("Proximity Left Gain: ", gainProximityL);
+                console.log("Proximity Right Gain: ", gainProximityR);
+				soundPlayerStereo.updateGains([gainProximityL,gainProximityR]);
             }
         });
     }
-
     requestAnimationFrame(renderPrediction);
 }
 

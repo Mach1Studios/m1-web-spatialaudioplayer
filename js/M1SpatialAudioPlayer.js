@@ -47,7 +47,7 @@ function setupDatGui() {
     gui.add(controls, "yawMultiplier", 0.0, 5.0);
     gui.add(controls, "pitchMultiplier", 0.0, 5.0);
     gui.add(controls, "rollMultiplier", 0.0, 5.0);
-    gui.add(controls, "distanceMultiplier" 0.0, 5.0);
+    gui.add(controls, "distanceMultiplier", 0.0, 5.0);
     gui.add(controls, "FOV", 30.0, 90.0);
     gui.add(controls, "filterSpeed", 0.1, 1.0);
 

@@ -235,8 +235,15 @@ async function trackerMain() {
     });
     renderPrediction();
 
-    info.innerHTML = "";
-    document.getElementById("main").style.display = "";
+    // wait for loaded audio
+    var timer = setInterval(function() {
+        if (soundPlayer.isReady && soundPlayerStereo.isReady) {
+            clearInterval(timer);
+            
+            info.innerHTML = "";
+            document.getElementById("main").style.display = "";
+        }
+    }, 1000);
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {

@@ -35,6 +35,7 @@ controls = new(function() {
     this.yawMultiplier = 2;
     this.pitchMultiplier = 1;
     this.rollMultiplier = 1;
+    this.distanceMultiplier = 1;
     this.FOV = 35;
     this.filterSpeed = 0.9;
     this.oneEuroFilterBeta = 0.06;
@@ -46,6 +47,7 @@ function setupDatGui() {
     gui.add(controls, "yawMultiplier", 0.0, 5.0);
     gui.add(controls, "pitchMultiplier", 0.0, 5.0);
     gui.add(controls, "rollMultiplier", 0.0, 5.0);
+    gui.add(controls, "distanceMultiplier" 0.0, 5.0);
     gui.add(controls, "FOV", 30.0, 90.0);
     gui.add(controls, "filterSpeed", 0.1, 1.0);
 
@@ -185,7 +187,7 @@ async function renderPrediction() {
 			let faceWidth = prediction.boundingBox.bottomRight[0][1] - prediction.boundingBox.topLeft[0][1];
 			if(faceWidthSaved < 0) faceWidthSaved = faceWidth;
 			
-			faceDistance = map(faceWidth, faceWidthSaved * 0.5, faceWidthSaved * 1.5, 0.0, 1.0);
+			faceDistance = map(faceWidth, faceWidthSaved * 0.5, faceWidthSaved * 1.5, 0.0, 1.0) * controls.distanceMultiplier;
 
             // FACE ORIENTATION TRACKER
             if (window.modeTracker == "facetracker") {

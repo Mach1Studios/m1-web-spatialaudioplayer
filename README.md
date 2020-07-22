@@ -2,8 +2,8 @@
 
 ## Demos
 List of already deployed demos utilizing concepts of Mach1 Spatial and facetracking
- - [Dual Layer Mach1Spatial](https://player.mach1.tech/demo/dual-layer/M1SpatialAudioPlayer.html)
- - [Mach1Spatial + Stereo Object](https://player.mach1.tech/demo/stereo-object/M1SpatialAudioPlayer.html)
+ - [Dual Layer Mach1Spatial](https://player.mach1.tech/demo/dual-layer/M1SpatialAudioPlayer.html) (Branch: [/demo-example/dual-layer](https://github.com/Mach1Studios/m1-web-spatialaudioplayer/tree/demo-example/dual-layer-m1spatial))
+ - [Mach1Spatial + Stereo Object](https://player.mach1.tech/demo/stereo-object/M1SpatialAudioPlayer.html) (Branch: [/demo-example/depth-object](https://github.com/Mach1Studios/m1-web-spatialaudioplayer/tree/demo-example/depth-object))
 
 ### Description
 A consolidated web spatial audio player for Mach1 Spatial playback with two goals: 

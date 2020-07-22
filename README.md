@@ -1,4 +1,9 @@
-# Mach1 Spatial Web Examples
+# Mach1 Spatial Headtracking Examples
+
+## Demos
+List of already deployed demos utilizing concepts of Mach1 Spatial and facetracking
+ - [Dual Layer Mach1Spatial](https://player.mach1.tech/demo/dual-layer/M1SpatialAudioPlayer.html)
+ - [Mach1Spatial + Stereo Object](https://player.mach1.tech/demo/stereo-object/M1SpatialAudioPlayer.html)
 
 ### Description
 A consolidated web spatial audio player for Mach1 Spatial playback with two goals: 

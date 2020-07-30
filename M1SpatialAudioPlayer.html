@@ -19,6 +19,10 @@
         <script src="js/osc.min.js"></script>
         <script src="js/1euro.js"></script>
 
+        <script src="js/artoolkit.min.js"></script>
+        <script src="js/artoolkit.three.js"></script>
+        <script src="js/ARTracker.js"></script>
+		
         <script src="js/Mach1SoundPlayer.js"></script>
         <script src="js/Mach1Decode.js"></script>
         <script src="js/M1SpatialAudioPlayer.js"></script>
@@ -118,16 +122,20 @@
                 <table style="background: #5C5C5C; padding-right: 15px;">
                     <tr>
                         <td>
-                            <input type="radio" name="mode" id="radio1" class="css-checkbox" checked="checked" value="facetracker" onclick="selectTracker()" />
-                            <label for="radio1" class="css-label">Facetracker</label>
+                            <input type="radio" name="mode" id="radio1" class="css-checkbox" checked="checked" value="artracker" onclick="selectTracker()" />
+                            <label for="radio1" class="css-label">ARTracker</label>
                         </td>
                         <td>
-                            <input type="radio" name="mode" id="radio2" class="css-checkbox" value="device" onclick="selectTracker()" />
-                            <label for="radio2" class="css-label">Device</label>
+                            <input type="radio" name="mode" id="radio2" class="css-checkbox" checked="checked" value="facetracker" onclick="selectTracker()" />
+                            <label for="radio2" class="css-label">Facetracker</label>
                         </td>
                         <td>
-                            <input type="radio" name="mode" id="radio3" class="css-checkbox" value="touch" onclick="selectTracker()" />
-                            <label for="radio3" class="css-label">Touch</label>
+                            <input type="radio" name="mode" id="radio3" class="css-checkbox" value="device" onclick="selectTracker()" />
+                            <label for="radio3" class="css-label">Device</label>
+                        </td>
+                        <td>
+                            <input type="radio" name="mode" id="radio4" class="css-checkbox" value="touch" onclick="selectTracker()" />
+                            <label for="radio4" class="css-label">Touch</label>
                         </td>
                     </tr>
                 </table>

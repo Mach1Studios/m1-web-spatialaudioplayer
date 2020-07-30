@@ -216,6 +216,8 @@ async function trackerMain() {
     }, 1000);
 }
 
+ARTracker.setup();
+
 document.addEventListener('DOMContentLoaded', (event) => {
     setupDatGui();
     trackerMain();

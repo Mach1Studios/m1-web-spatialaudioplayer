@@ -2,19 +2,39 @@
 window.modeTracker = "";
 
 const boseARDeviceElement = document.querySelector("bose-ar-device");
+const boseAROrder = 'YXZ';
+const boseARConfig = {
+    order : boseAROrder,
+    euler : new THREE.Euler(undefined, undefined, undefined, boseAROrder),
+    eulerOffset : new THREE.Euler(undefined, undefined, undefined, boseAROrder),
+    recallibrate : true,
+    callibrate() {
+        this.eulerOffset.copy(this.euler);
+        this.recallibrate = false;
+    },
+    eulerScalar : {x:1, y:1, z:1},
+}
+
+boseARDeviceElement.setAttribute('double-tap', '');
+boseARDeviceElement.addEventListener('doubleTap', event => {
+    boseARConfig.recallibrate = true;
+});
 
 boseARDeviceElement.addEventListener("rotation", event => {
-    rotationX.value = Number(boseARDeviceElement.getAttribute("rotationX")).toFixed(3);
-    rotationY.value = Number(boseARDeviceElement.getAttribute("rotationY")).toFixed(3);
-    rotationZ.value = Number(boseARDeviceElement.getAttribute("rotationZ")).toFixed(3);                
-  
-    rotationW.value = Number(boseARDeviceElement.getAttribute("rotationW")).toFixed(3);
+    boseARConfig.euler.x = Number(event.target.getAttribute("rotationpitch")) + (Math.PI/2);
+    boseARConfig.euler.y = Number(event.target.getAttribute("rotationyaw"));
+    boseARConfig.euler.z = Number(event.target.getAttribute("rotationroll"));
 
-    rotationPitch.value = Number(boseARDeviceElement.getAttribute("rotationPitch")).toFixed(3);
-    rotationRoll.value = Number(boseARDeviceElement.getAttribute("rotationRoll")).toFixed(3); 
-    rotationYaw.value = Number(boseARDeviceElement.getAttribute("rotationYaw")).toFixed(3);
+    if(boseARConfig.recallibrate)
+        boseARConfig.callibrate();
 
-    rotationTimestamp.value = boseARDeviceElement.getAttribute("rotationTimestamp");
+    boseARConfig.euler.x = (boseARConfig.euler.x - boseARConfig.eulerOffset.x) * boseARConfig.eulerScalar.x;
+    boseARConfig.euler.y = (boseARConfig.euler.y - boseARConfig.eulerOffset.y) * boseARConfig.eulerScalar.y;
+    boseARConfig.euler.z = (boseARConfig.euler.z - boseARConfig.eulerOffset.z) * boseARConfig.eulerScalar.z;
+    
+    rotationPitch.value = radians_to_degrees(boseARConfig.euler.x);
+    rotationYaw.value = radians_to_degrees(boseARConfig.euler.y);
+    rotationRoll.value = radians_to_degrees(boseARConfig.euler.z);
 });
 
 function selectTracker() {

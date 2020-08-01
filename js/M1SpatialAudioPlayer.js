@@ -1,6 +1,22 @@
 // ------------------------
 window.modeTracker = "";
 
+boseARDeviceElement = document.querySelector("bose-ar-device");
+
+boseARDeviceElement.addEventListener("rotation", event => {
+    rotationX.value = Number(boseARDeviceElement.getAttribute("rotationX")).toFixed(3);
+    rotationY.value = Number(boseARDeviceElement.getAttribute("rotationY")).toFixed(3);
+    rotationZ.value = Number(boseARDeviceElement.getAttribute("rotationZ")).toFixed(3);                
+  
+    rotationW.value = Number(boseARDeviceElement.getAttribute("rotationW")).toFixed(3);
+
+    rotationPitch.value = Number(boseARDeviceElement.getAttribute("rotationPitch")).toFixed(3);
+    rotationRoll.value = Number(boseARDeviceElement.getAttribute("rotationRoll")).toFixed(3); 
+    rotationYaw.value = Number(boseARDeviceElement.getAttribute("rotationYaw")).toFixed(3);
+
+    rotationTimestamp.value = boseARDeviceElement.getAttribute("rotationTimestamp");
+});
+
 function selectTracker() {
     var ele = document.getElementsByName("mode");
     for (i = 0; i < ele.length; i++) {
@@ -10,8 +26,14 @@ function selectTracker() {
     }
 }
 
+function enableBoseAR() {
+    var ele = document.getElementById("boseRate");
+    boseARDeviceElement.setAttribute('rotation', ele.options[ele.selectedIndex].value);
+}
+
 document.addEventListener('DOMContentLoaded', (event) => {
     selectTracker();
+    enableBoseAR();
 })
 
 // ------------------------
@@ -168,6 +190,12 @@ async function renderPrediction() {
                 window.pitch = pitchOptimized;
                 window.roll = rollOptimized;
             }
+
+            if (window.modeTracker == "bosear") {
+                window.yaw = rotationYaw.value;
+                window.pitch = rotationPitch.value;
+                window.roll = rotationRoll.value;
+            }
         });
     }
 
@@ -233,6 +261,12 @@ function DisplayDebug() {
     video.style.display = "";
   } else {
     video.style.display = "none";
+  }
+  var boseaStats = document.getElementById("bosearstats");
+  if (boseaStats.style.display === "none") {
+    boseaStats.style.display = "";
+  } else {
+    boseaStats.style.display = "none";
   }
 } 
 

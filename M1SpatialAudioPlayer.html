@@ -3,6 +3,10 @@
     <head>
         <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
         <meta content="utf-8" http-equiv="encoding" />
+
+        <!-- https://github.com/zakaton/Bose-Frames-Web-SDK -->
+        <script src="js/bose-ar-web-sdk.min.js"></script>
+
         <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
         <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tf-backend-wasm.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/facemesh"></script>
@@ -21,11 +25,23 @@
 
         <script src="js/Mach1SoundPlayer.js"></script>
         <script src="js/Mach1Decode.js"></script>
-        <script src="js/M1SpatialAudioPlayer.js"></script>
 
         <style type="text/css">
+            @font-face {
+                font-family: 'Roboto Mono';
+                src: local('Roboto Mono'), local('RobotoMono-Regular'), url('resources/RobotoMono-Regular.woff2') format('woff2');
+                font-style: normal;
+                font-weight: 400;
+            }
+
+            @font-face {
+                font-family: 'Roboto Mono';
+                src: local('Roboto Mono Medium'), local('RobotoMono-Medium'), url('resources/RobotoMono-Medium.woff2') format('woff2');
+                font-style: normal;
+                font-weight: 500;
+            }
             * {
-                font-family: arial;
+                font-family: 'Roboto Mono', monospace;
                 font-size: 12px;
             }
             .canvas-wrapper {
@@ -41,54 +57,22 @@
                 font-style: normal;
                 height: 31px;
                 line-height: 31px;
-                width: 98px;
+                width: 100%;
                 text-decoration: none;
                 text-align: center;
-                text-shadow: 0px 1px 0px #000;
+                margin-bottom: 15px;
             }
             .button:hover {
                 background-color: #EEEEEE;
                 color:#000000;
             }
-            input[type="radio"].css-checkbox {
-                position: absolute;
-                z-index: -1000;
-                left: -1000px;
-                overflow: hidden;
-                clip: rect(0 0 0 0);
-                height: 1px;
-                width: 1px;
-                margin: -1px;
-                padding: 0;
-                border: 0;
-                text-shadow: 0px 1px 0px #000;
-            }
-            input[type="radio"].css-checkbox + label.css-label {
-                color: #ffffff;
-                padding-left: 27px;
-                height: 23px;
-                display: inline-block;
-                line-height: 23px;
-                background-repeat: no-repeat;
-                background-position: 0 0;
-
-                font-weight: bold;
-                font-style: normal;
-
-                vertical-align: middle;
-                cursor: pointer;
-            }
-            input[type="radio"].css-checkbox:checked + label.css-label {
-                background-position: 0 -23px;
-            }
-            label.css-label {
-                background-image: url("img/checkbox.png");
-                -webkit-touch-callout: none;
-                -webkit-user-select: none;
-                -khtml-user-select: none;
-                -moz-user-select: none;
-                -ms-user-select: none;
-                user-select: none;
+            .showOverlay {
+              bottom: 0;
+              display: flex;
+              font-size: 16px;
+              left: calc(50% - 55px);
+              margin-bottom: 7px;
+              position: absolute;
             }
             #compassContainer {
                 text-align: center;
@@ -97,6 +81,175 @@
                 justify-content: center;
                 margin-top: 25vh;
             }
+            .containerOuter {
+              background: white;
+              border-radius: 8px;
+              box-shadow: 2px 6px 20px 2px rgba(10,10,120,0.15);
+            }
+            .containerInner {
+              position: relative;
+              margin: 20px;
+              overflow: hidden;
+              width: 160px;
+            }
+            .hidden {
+              display: none;
+            }
+            .entry {
+              height: 25px;
+              position: absolute;
+              width: 160px;
+            }
+            .entry:nth-child(2) {
+              left: 8px;
+              top: 8px;
+            }
+            .entry:nth-child(4) {
+              left: 8px;
+              top: 58px;
+            }
+            .entry:nth-child(6) {
+              left: 8px;
+              top: 108px;
+            }
+            .entry:nth-child(8) {
+              left: 8px;
+              top: 158px;
+            }
+            .circle {
+              border: 2px solid #5C5C5C;
+              border-radius: 50%;
+              cursor: pointer;
+              height: 20px;
+              position: absolute;
+              transition: border-color 300ms;
+              width: 20px;
+            }
+            .entry-label {
+              cursor: pointer;
+              margin-top: 3px;
+              padding-left: 40px;
+              user-select: none;
+              -moz-user-select: none;
+            }
+            .overlay {
+              background: var(--hl-yellow);
+              mask: url(#holes);
+              -webkit-mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAACMCAYAAAAOc+uVAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAItSURBVHic7ZnNjhJBFIVPA0txr0Iyw+tIdOXWaDRufZWZeYbZuMKOUV9Gg+HHGN/BHBcNcSBT1KVOEVycb0mq635UVd9U5zQkif+Y3rkFclhQxYIqFlQZiM8vALQAPgP4AWC1+X0E4ALAFMBzAOPiCixjRfIdyX5g/h7JFyTnJYVKBGckHxQsxJBke2rBK5LF55bdal6fSnCmyO1JhlcyKrhkwbYekBySXNcUfF1L7o7k20jhhsxetxYAJk3T/Kks2EfXmkaHxkXO1MfacgCwmbPNjYsIftV1knzJDYgIfqsgkuJ7bkBE8FcFkRTr3IBzXxay9SOCjyuIFM8dEZxUECmeOyL4tIJIimluQKRRLwFcnqBRDwDMUaFRjwG8quC0zxtk5ACEL6wrksNaZiQfkvwZKRxtM08AfGDgBh2Q6wG4BfAo+sAxXB/xp+6VI3lzTMGSK3/Lgu1mt62fji1W+tH0m+R7dm9iZNVeMnjm9om0mUOs8O+zc47dz84Juh76DJG3NYEqeHLOfVnIYkEVC6pYUMWCKhZUsaCKBVUsqGJBFQuqWFDFgipO3OnEfRcn7qWCTtxTOHFP4cS9Ek7cVZy4qzhxL4ZO3AXoxF2QoxP3DifuW5y4q1hQxYIqFlSxoIoFVSyoYkEVC6pYUMWCKhZUsaCKE3c6cd/FiXupoBP3FE7cUzhxr4QTdxUn7ipO3IuhE3cBOnEX5OjEvcOJ+xYn7ioWVLGgigVV/gKEL4RSyM8Z8wAAAABJRU5ErkJggg==);
+              height: 140px;
+              pointer-events: none;
+              transition: background 300ms;
+              width: 40px;
+            }
+            .highlight {
+              background: #5C5C5C;
+              border-radius: 50%;
+              height: 12px;
+              left: 14px;
+              pointer-events: none;
+              position: absolute;
+              top: 14px;
+              transition: transform 400ms cubic-bezier(0.175, 0.885, 0.32, 1.2);
+              transform: translateY(-50px);
+              width: 12px;
+            }
+            .hidden:nth-child(1):checked ~ .highlight {
+              transform: translateY(0);
+            }
+            .hidden:nth-child(3):checked ~ .highlight {
+              transform: translateY(50px);
+            }
+            .hidden:nth-child(5):checked ~ .highlight {
+              transform: translateY(100px);
+            }
+            .hidden:nth-child(7):checked ~ .highlight {
+              transform: translateY(150px);
+            }
+            .hidden:nth-child(1):checked + .entry .circle {
+              border-color: #5C5C5C;
+            }
+            .hidden:nth-child(3):checked + .entry .circle {
+              border-color: #5C5C5C;
+            }
+            .hidden:nth-child(5):checked + .entry .circle {
+              border-color: #5C5C5C;
+            }
+            .hidden:nth-child(7):checked + .entry .circle {
+              border-color: #5C5C5C;
+            }
+            /* DatGUI Styling */
+            .dg.main.taller-than-window .close-button {
+                border-top: 1px solid #5C5C5C;
+            }
+            .dg.main .close-button {
+                background-color: #5C5C5C;
+                color:#fff;
+            }
+            .dg.main .close-button:hover {
+                background-color: #5C5C5C;
+            }
+            .dg {
+                color: #000;
+                text-shadow: none !important;
+            }
+            .dg.main::-webkit-scrollbar {
+                background: #fafafa;
+            }
+            .dg.main::-webkit-scrollbar-thumb {
+                background: #bbb;
+            }
+            .dg li:not(.folder) {
+                background: var(--hl-yellow);
+                border-bottom: 1px solid #ddd;
+            }
+            .dg li.save-row .button {
+                text-shadow: none !important;
+            }
+            .dg li.title {
+                background: #e8e8e8 url(data:image/gif;base64,R0lGODlhBQAFAJEAAP////Pz8////////yH5BAEAAAIALAAAAAAFAAUAAAIIlI+hKgFxoCgAOw==) 6px 10px no-repeat;
+            }
+            .dg .cr.function:hover,.dg .cr.boolean:hover {
+                background: #fff;
+            }
+            .dg .c input[type=text] {
+                background: #e9e9e9;
+            }
+            .dg .c input[type=text]:hover {
+                background: #eee;
+            }
+            .dg .c input[type=text]:focus {
+                background: #eee;
+                color: #555;
+            }
+            .dg .c .slider {
+                background: #e9e9e9;
+            }
+            .dg .c .slider:hover {
+                background: #eee;
+            }
+            .dg .c .slider-fg {
+                background: #5C5C5C;
+            }
+            .dg .c .slider:hover .slider-fg{
+                background: #000;
+            }
+            /* Disable left borders */
+            .dg .cr.boolean {
+                border-left: 3px solid #5C5C5C;
+            }
+            .dg .cr.color{
+                border-left: 3px solid #5C5C5C;
+            }
+            .dg .cr.function{
+                border-left: 3px solid #5C5C5C;
+            }
+            .dg .cr.number{
+                border-left: 3px solid #5C5C5C;
+            }
+            .dg .cr.number input[type="text"]{
+                color: #5C5C5C;
+            }
+
         </style>
     </head>
     <body>
@@ -114,32 +267,62 @@
                 <div class="canvas-wrapper" id="3dview" style="width: 640px; height: 480px;display:none;">
                 </div>
             </div>
-            <div style="position: absolute; top: 20px; left: 20px;">
-                <table style="background: #5C5C5C; padding-right: 15px;">
-                    <tr>
-                        <td>
-                            <input type="radio" name="mode" id="radio1" class="css-checkbox" checked="checked" value="facetracker" onclick="selectTracker()" />
-                            <label for="radio1" class="css-label">Facetracker</label>
-                        </td>
-                        <td>
-                            <input type="radio" name="mode" id="radio2" class="css-checkbox" value="device" onclick="selectTracker()" />
-                            <label for="radio2" class="css-label">Device</label>
-                        </td>
-                        <td>
-                            <input type="radio" name="mode" id="radio3" class="css-checkbox" value="touch" onclick="selectTracker()" />
-                            <label for="radio3" class="css-label">Touch</label>
-                        </td>
-                    </tr>
-                </table>
+            <div class="containerOuter" style="position:absolute; top:20px; left:30px;">
+              <div class="containerInner">
+                <input type="radio" name="mode" id="radio1" class="hidden" checked="checked" value="facetracker" onclick="selectTracker()">
+                <label class="entry" for="radio1"><div class="circle"></div><div class="entry-label">Facetracker</div></label>
+                <input type="radio" name="mode" id="radio2" class="hidden" value="device" onclick="selectTracker()">
+                <label class="entry" for="radio2"><div class="circle"></div><div class="entry-label">Device</div></label>
+                <input type="radio" name="mode" id="radio3" class="hidden" value="touch" onclick="selectTracker()" >
+                <label class="entry" for="radio3"><div class="circle"></div><div class="entry-label">Touch</div></label>
+                <input type="radio" name="mode" id="radio4" class="hidden" value="bosear" onclick="selectTracker()" >
+                <label class="entry" for="radio4"><div class="circle"></div><div class="entry-label">BoseAR</div></label>
+                <div id="bosearstats" style="display: none; position: relative; top: 200px;">
+                  <bose-ar-device rotation=40 rotation="fast"></bose-ar-device>
+                  <form id="Rotation">
+                    <h3>Rotation</h3>
+                    <select id="boseRate" size="5" style="overflow: hidden" oninput="enableBoseAR()">
+                        <option selected value=0>disabled</option>
+                        <option value=20>very fast (20ms)</option>
+                        <option value=40>fast (40ms)</option>
+                        <option value=80>normal (80ms)</option>
+                        <option value=160>slow (160ms)</option>
+                    </select>
+                    <br>
+                    <br>
+                    <label for=rotationYaw>yaw</label>
+                    <input id=rotationYaw readonly size=2>
+                    <label for=rotationPitch>pitch</label>
+                    <input id=rotationPitch readonly size=2>
+                </form>
+                </div>
+                <div class="highlight"></div>
+                <div class="overlay"></div>
+              </div>
             </div>
-            <div style="position: absolute; top: 60px; left: 20px;">
-                <button onclick="Play()" class="button">Play</button>
-                <button onclick="Stop()" class="button">Stop</button>
-                <button onclick="DisplayDebug()" class="button">Debug</button>
+            <svg width="0" height="0" viewBox="0 0 40 190">
+              <defs>
+                <mask id="holes">
+                  <rect x="0" y="0" width="100" height="140" fill="white" />
+                  <circle r="12" cx="20" cy="20" fill="black"/>
+                  <circle r="12" cx="20" cy="70" fill="black"/>
+                  <circle r="12" cx="20" cy="120" fill="black"/>
+                  <circle r="12" cx="20" cy="170" fill="black"/>
+                </mask>
+              </defs>
+            </svg>
+            <div class="containerOuter" style="position: absolute; top: 20px; left: 240px;">
+                <div class="containerInner">
+                    <button onclick="Play()" class="button">Play</button>
+                    <button onclick="Stop()" class="button">Stop</button>
+                    <button onclick="DisplayDebug()" class="button">Debug</button>
+                </div>
             </div>
         </div>
 
         <div id="stats" style="position:absolute;bottom:5px;left:5px;"></div>
-        <div id="info" style="position: relative; margin: auto; margin-top: 50vh; text-align: center; font-size: 3em;">loading...</div>
+        <div id="info" style="position:relative; margin:auto; margin-top:50vh; text-align:center; font-size:3em;">loading...</div>
+
+        <script src="js/M1SpatialAudioPlayer.js"></script>
     </body>
 </html>

@@ -1,7 +1,7 @@
 // ------------------------
 window.modeTracker = "";
 
-boseARDeviceElement = document.querySelector("bose-ar-device");
+const boseARDeviceElement = document.querySelector("bose-ar-device");
 
 boseARDeviceElement.addEventListener("rotation", event => {
     rotationX.value = Number(boseARDeviceElement.getAttribute("rotationX")).toFixed(3);

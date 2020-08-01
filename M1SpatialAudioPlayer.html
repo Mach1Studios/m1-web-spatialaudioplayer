@@ -89,7 +89,7 @@
             .containerInner {
               position: relative;
               margin: 20px;
-              overflow: hidden;
+              overflow: scroll;
               width: 160px;
             }
             .hidden {
@@ -268,7 +268,7 @@
                 </div>
             </div>
             <div class="containerOuter" style="position:absolute; top:20px; left:30px;">
-              <div class="containerInner">
+              <div class="containerInner" style="min-height: 190px;">
                 <input type="radio" name="mode" id="radio1" class="hidden" checked="checked" value="facetracker" onclick="selectTracker()">
                 <label class="entry" for="radio1"><div class="circle"></div><div class="entry-label">Facetracker</div></label>
                 <input type="radio" name="mode" id="radio2" class="hidden" value="device" onclick="selectTracker()">
@@ -278,23 +278,25 @@
                 <input type="radio" name="mode" id="radio4" class="hidden" value="bosear" onclick="selectTracker()" >
                 <label class="entry" for="radio4"><div class="circle"></div><div class="entry-label">BoseAR</div></label>
                 <div id="bosearstats" style="display: none; position: relative; top: 200px;">
-                  <bose-ar-device rotation=40 rotation="fast"></bose-ar-device>
-                  <form id="Rotation">
-                    <h3>Rotation</h3>
-                    <select id="boseRate" size="5" style="overflow: hidden" oninput="enableBoseAR()">
-                        <option selected value=0>disabled</option>
-                        <option value=20>very fast (20ms)</option>
-                        <option value=40>fast (40ms)</option>
-                        <option value=80>normal (80ms)</option>
-                        <option value=160>slow (160ms)</option>
-                    </select>
-                    <br>
-                    <br>
-                    <label for=rotationYaw>yaw</label>
-                    <input id=rotationYaw readonly size=2>
-                    <label for=rotationPitch>pitch</label>
-                    <input id=rotationPitch readonly size=2>
-                </form>
+                    <bose-ar-device></bose-ar-device>
+                    <form id="Rotation">
+                        <h3>Rotation</h3>
+                        <select id="boseRate" size="5" oninput="enableBoseAR()">
+                            <option selected value=0>disabled</option>
+                            <option value=20>very fast (20ms)</option>
+                            <option value=40>fast (40ms)</option>
+                            <option value=80>normal (80ms)</option>
+                            <option value=160>slow (160ms)</option>
+                        </select>
+                        <br>
+                        <br>
+                        <label for=rotationYaw>yaw</label>
+                        <input id=rotationYaw readonly size=2><br>
+                        <label for=rotationPitch>pitch</label>
+                        <input id=rotationPitch readonly size=2><br>
+                        <label for=rotationRoll>roll</label>
+                        <input id=rotationRoll readonly size=2>
+                    </form>
                 </div>
                 <div class="highlight"></div>
                 <div class="overlay"></div>

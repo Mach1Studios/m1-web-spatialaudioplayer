@@ -35,6 +35,12 @@ boseARDeviceElement.addEventListener("rotation", event => {
     rotationPitch.value = radians_to_degrees(boseARConfig.euler.x);
     rotationYaw.value = radians_to_degrees(boseARConfig.euler.y);
     rotationRoll.value = radians_to_degrees(boseARConfig.euler.z);
+
+    if (window.modeTracker == "bosear") {
+        window.yaw = Number(rotationYaw.value);
+        window.pitch = Number(rotationPitch.value);
+        window.roll = Number(rotationRoll.value);
+    }
 });
 
 function selectTracker() {
@@ -209,12 +215,6 @@ async function renderPrediction() {
                 window.yaw = yawOptimized;
                 window.pitch = pitchOptimized;
                 window.roll = rollOptimized;
-            }
-
-            if (window.modeTracker == "bosear") {
-                window.yaw = rotationYaw.value;
-                window.pitch = rotationPitch.value;
-                window.roll = rotationRoll.value;
             }
         });
     }

@@ -32,9 +32,19 @@ boseARDeviceElement.addEventListener("rotation", event => {
     boseARConfig.euler.y = (boseARConfig.euler.y - boseARConfig.eulerOffset.y) * boseARConfig.eulerScalar.y;
     boseARConfig.euler.z = (boseARConfig.euler.z - boseARConfig.eulerOffset.z) * boseARConfig.eulerScalar.z;
     
-    rotationPitch.value = radians_to_degrees(boseARConfig.euler.x);
-    rotationYaw.value = radians_to_degrees(boseARConfig.euler.y);
-    rotationRoll.value = radians_to_degrees(boseARConfig.euler.z);
+    const pitch = radians_to_degrees(boseARConfig.euler.x);
+    const yaw = radians_to_degrees(boseARConfig.euler.y);
+    const roll = radians_to_degrees(boseARConfig.euler.z);
+
+    rotationPitch.value = pitch;
+    rotationYaw.value = yaw;
+    rotationRoll.value = roll;
+
+    if (window.modeTracker == "bosear") {
+        window.pitch = pitch * parseFloat(controls.pitchMultiplier);
+        window.yaw = yaw * parseFloat(controls.yawMultiplier);
+        window.roll = roll * parseFloat(controls.rollMultiplier);
+    }
 });
 
 function selectTracker() {
@@ -209,12 +219,6 @@ async function renderPrediction() {
                 window.yaw = yawOptimized;
                 window.pitch = pitchOptimized;
                 window.roll = rollOptimized;
-            }
-
-            if (window.modeTracker == "bosear") {
-                window.yaw = rotationYaw.value;
-                window.pitch = rotationPitch.value;
-                window.roll = rotationRoll.value;
             }
         });
     }

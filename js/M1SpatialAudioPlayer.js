@@ -41,9 +41,10 @@ boseARDeviceElement.addEventListener("rotation", event => {
     rotationRoll.value = roll;
 
     if (window.modeTracker == "bosear") {
-        window.pitch = pitch * parseFloat(controls.pitchMultiplier);
-        window.yaw = yaw * parseFloat(controls.yawMultiplier);
-        window.roll = roll * parseFloat(controls.rollMultiplier);
+        //TODO: reimplement multipliers and reset all to 1 when `bosear` mode selected
+        window.yaw = yaw;
+        window.pitch = pitch;
+        window.roll = roll;
     }
 });
 

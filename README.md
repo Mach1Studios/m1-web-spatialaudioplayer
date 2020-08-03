@@ -4,6 +4,7 @@
 List of already deployed demos utilizing concepts of Mach1 Spatial and facetracking
  - [Dual Layer Mach1Spatial](https://player.mach1.tech/demo/dual-layer/M1SpatialAudioPlayer.html) (Branch: [/demo-example/dual-layer](https://github.com/Mach1Studios/m1-web-spatialaudioplayer/tree/demo-example/dual-layer-m1spatial))
  - [Mach1Spatial + Stereo Object](https://player.mach1.tech/demo/stereo-object/M1SpatialAudioPlayer.html) (Branch: [/demo-example/depth-object](https://github.com/Mach1Studios/m1-web-spatialaudioplayer/tree/demo-example/depth-object))
+ - [Content Demos](https://demos.mach1.tech)
 
 ### Description
 A consolidated web spatial audio player for Mach1 Spatial playback with two goals: 
@@ -40,8 +41,8 @@ window.createOneEuroFilters = function createOneEuroFilters() {
 **Coming soon...**
 
 ### Mouse UI
-Implemented a simple mouse control bound to width of window
+When utilizing `Touch` mode a simple mouse control bound to width of window will be used as the input orientation for the `Mach1Decode` object(s) and for the OSC output.
 
 
 ### Bose AR IMU
-**Coming soon...**
+When utilizing `Bose AR` mode a connection prompt and handler supplied by the [BoseAR Web SDK](https://github.com/zakaton/Bose-Frames-Web-SDK) will be utilized for the input orientation for the `Mach1Decode` object(s) and for the OSC output.

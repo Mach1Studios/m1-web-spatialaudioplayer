@@ -1,6 +1,5 @@
 var ARTracker = {
     setup: function() {
-
         window.ARThreeOnLoad = function() {
 
             ARController.getUserMediaThreeScene({
@@ -11,6 +10,7 @@ var ARTracker = {
                     //document.body.className = arController.orientation;
 
                     arController.setPatternDetectionMode(artoolkit.AR_TEMPLATE_MATCHING_MONO_AND_MATRIX);
+					arController.setThresholdMode(artoolkit.AR_LABELING_THRESH_MODE_AUTO_MEDIAN);
 
                     var renderer = new THREE.WebGLRenderer({
                         antialias: true
@@ -68,8 +68,9 @@ var ARTracker = {
                     icosahedron.material.flatShading;
                     icosahedron.position.z = 0.0;
 
-                    var countBarcodes = 6;
-                    for (var i = 0; i < countBarcodes; i++) {
+					var maxCountBarcodes = 6;
+                    console.log("maxCountBarcodes", maxCountBarcodes);
+                    for (var i = 0; i < maxCountBarcodes; i++) {
                         var sphere = new THREE.Mesh(
                             new THREE.SphereGeometry(1.0, 8, 8),
                             new THREE.MeshNormalMaterial()
@@ -89,7 +90,7 @@ var ARTracker = {
                     var detectedBarcodeMarkers = {};
                     arController.addEventListener('getMarker', function(ev) {
                         var barcodeId = ev.data.marker.idMatrix;
-                        if (barcodeId !== -1 && barcodeId < countBarcodes) {
+                        if (barcodeId !== -1 && barcodeId < maxCountBarcodes) {
                             //console.log("saw a barcode marker with id", barcodeId);
 
                             var transform = ev.data.matrix;
@@ -118,9 +119,11 @@ var ARTracker = {
                             var y = THREE.Math.radToDeg(worldRot.y);
                             var z = THREE.Math.radToDeg(worldRot.z);
 
+							//console.log("barcodeId", barcodeId);
+
                             lastDetectedBarcodeRot = [
                                 x > 0 ? -(180 - x) : x + 180,
-                                y + barcodeId * 360.0 / countBarcodes,
+                               window.modeTracker == "artracker" ? (y + barcodeId * 360.0 / 6 ) : (y - 90 + (360.0 - barcodeId * 360.0) / 2 ),
                                 z
                             ];
                             lastDetectedBarcodeTime = performance.now();
@@ -133,19 +136,16 @@ var ARTracker = {
 
                         //console.log(arController.getMarker(0));
                         if (performance.now() - lastDetectedBarcodeTime < 500) {
-                            console.log("rotation: ", lastDetectedBarcodeRot);
+							if (window.modeTracker == "artracker" || (window.modeTracker == "artrackerWithFacetracker" && window.recognizedFace == false)) {
+								window.yaw = lastDetectedBarcodeRot[1];
+								window.pitch = lastDetectedBarcodeRot[0];
+								window.roll = lastDetectedBarcodeRot[2];
+								console.log("ar detected", window.yaw, window.pitch, window.roll);
+							}
                         }
 
                         arScene.renderOn(renderer);
                         requestAnimationFrame(tick);
-
-                        if (window.modeTracker == " artracker") {
-                            window.yaw = lastDetectedBarcodeRot[1];
-                            window.pitch = lastDetectedBarcodeRot[0];
-                            window.roll = lastDetectedBarcodeRot[2];
-                        }
-
-
                     };
 
                     tick();

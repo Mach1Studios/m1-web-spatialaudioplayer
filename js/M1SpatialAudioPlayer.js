@@ -1,5 +1,6 @@
 // ------------------------
 window.modeTracker = "";
+window.recognizedFace = false;
 
 function selectTracker() {
     var ele = document.getElementsByName("mode");
@@ -11,7 +12,7 @@ function selectTracker() {
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
-    selectTracker();
+	selectTracker();
 })
 
 // ------------------------
@@ -96,6 +97,9 @@ async function renderPrediction() {
     ctx.drawImage(video, 0, 0, videoWidth, videoHeight, 0, 0, canvas.width, canvas.height);
 
     document.getElementById("stats").innerHTML = "";
+	
+	var recognizedFace = false;
+	
     if (predictions.length > 0) {
         predictions.forEach((prediction) => {
             try {
@@ -103,73 +107,86 @@ async function renderPrediction() {
             } catch (err) {
                 document.getElementById("stats").innerHTML = err.message;
             }
+			
+			if(prediction.faceInViewConfidence > 0.9) {
 
-            const keypoints = prediction.scaledMesh;
-            // console.log(keypoints[0][2])
+				//console.log("confidence!", prediction.faceInViewConfidence.toFixed(4));
 
-            for (let i = 0; i < keypoints.length; i++) {
-                const x = keypoints[i][0];
-                const y = keypoints[i][1];
+				const keypoints = prediction.scaledMesh;
+				// console.log(keypoints[0][2])
 
-                ctx.fillStyle = "white";
-                ctx.fillRect(x, y, 2, 2);
+				for (let i = 0; i < keypoints.length; i++) {
+					const x = keypoints[i][0];
+					const y = keypoints[i][1];
 
-                if (parseInt(controls.nPoint) == i) {
-                    ctx.fillStyle = "red";
-                    ctx.fillRect(x, y, 6, 6);
-                }
+					ctx.fillStyle = "white";
+					ctx.fillRect(x, y, 2, 2);
 
-                if (i == 10 || i == 152) {
-                    ctx.fillStyle = "green";
-                    ctx.fillRect(x, y, 6, 6);
-                }
-                if (i == 234 || i == 454) {
-                    ctx.fillStyle = "yellow";
-                    ctx.fillRect(x, y, 6, 6);
-                }
-            }
+					if (parseInt(controls.nPoint) == i) {
+						ctx.fillStyle = "red";
+						ctx.fillRect(x, y, 6, 6);
+					}
 
-            var pTop = new THREE.Vector3(prediction.mesh[10][0], prediction.mesh[10][1], prediction.mesh[10][2]);
-            var pBottom = new THREE.Vector3(prediction.mesh[152][0], prediction.mesh[152][1], prediction.mesh[152][2]);
-            var pLeft = new THREE.Vector3(prediction.mesh[234][0], prediction.mesh[234][1], prediction.mesh[234][2]);
-            var pRight = new THREE.Vector3(prediction.mesh[454][0], prediction.mesh[454][1], prediction.mesh[454][2]);
+					if (i == 10 || i == 152) {
+						ctx.fillStyle = "green";
+						ctx.fillRect(x, y, 6, 6);
+					}
+					if (i == 234 || i == 454) {
+						ctx.fillStyle = "yellow";
+						ctx.fillRect(x, y, 6, 6);
+					}
+				}
 
-            var pTB = pTop.clone().addScaledVector(pBottom, -1).normalize();
-            var pLR = pLeft.clone().addScaledVector(pRight, -1).normalize();
+				var pTop = new THREE.Vector3(prediction.mesh[10][0], prediction.mesh[10][1], prediction.mesh[10][2]);
+				var pBottom = new THREE.Vector3(prediction.mesh[152][0], prediction.mesh[152][1], prediction.mesh[152][2]);
+				var pLeft = new THREE.Vector3(prediction.mesh[234][0], prediction.mesh[234][1], prediction.mesh[234][2]);
+				var pRight = new THREE.Vector3(prediction.mesh[454][0], prediction.mesh[454][1], prediction.mesh[454][2]);
 
-            var yaw = radians_to_degrees(Math.PI / 2 - pLR.angleTo(new THREE.Vector3(0, 0, 1)));
-            var pitch = radians_to_degrees(Math.PI / 2 - pTB.angleTo(new THREE.Vector3(0, 0, 1)));
-            var roll = radians_to_degrees(Math.PI / 2 - pTB.angleTo(new THREE.Vector3(1, 0, 0)));
+				var pTB = pTop.clone().addScaledVector(pBottom, -1).normalize();
+				var pLR = pLeft.clone().addScaledVector(pRight, -1).normalize();
 
-            if (yaw > parseFloat(controls.FOV)) {
-                yaw = parseFloat(controls.FOV);
-            }
-            if (yaw < -parseFloat(controls.FOV)) {
-                yaw = -parseFloat(controls.FOV);
-            }
-            if (pitch > parseFloat(controls.FOV)) {
-                pitch = parseFloat(controls.FOV);
-            }
-            if (pitch < -parseFloat(controls.FOV)) {
-                pitch = -parseFloat(controls.FOV);
-            }
-            if (roll > parseFloat(controls.FOV)) {
-                roll = parseFloat(controls.FOV);
-            }
-            if (roll < -parseFloat(controls.FOV)) {
-                roll = -parseFloat(controls.FOV);
-            }
-            yawOptimized = yaw * parseFloat(controls.yawMultiplier);
-            pitchOptimized = pitch * parseFloat(controls.pitchMultiplier);
-            rollOptimized = roll * parseFloat(controls.rollMultiplier);
+				var yaw = radians_to_degrees(Math.PI / 2 - pLR.angleTo(new THREE.Vector3(0, 0, 1)));
+				var pitch = radians_to_degrees(Math.PI / 2 - pTB.angleTo(new THREE.Vector3(0, 0, 1)));
+				var roll = radians_to_degrees(Math.PI / 2 - pTB.angleTo(new THREE.Vector3(1, 0, 0)));
 
-            if (window.modeTracker == "facetracker") {
-                window.yaw = yawOptimized;
-                window.pitch = pitchOptimized;
-                window.roll = rollOptimized;
-            }
+				if (yaw > parseFloat(controls.FOV)) {
+					yaw = parseFloat(controls.FOV);
+				}
+				if (yaw < -parseFloat(controls.FOV)) {
+					yaw = -parseFloat(controls.FOV);
+				}
+				if (pitch > parseFloat(controls.FOV)) {
+					pitch = parseFloat(controls.FOV);
+				}
+				if (pitch < -parseFloat(controls.FOV)) {
+					pitch = -parseFloat(controls.FOV);
+				}
+				if (roll > parseFloat(controls.FOV)) {
+					roll = parseFloat(controls.FOV);
+				}
+				if (roll < -parseFloat(controls.FOV)) {
+					roll = -parseFloat(controls.FOV);
+				}
+				yawOptimized = yaw * parseFloat(controls.yawMultiplier);
+				pitchOptimized = pitch * parseFloat(controls.pitchMultiplier);
+				rollOptimized = roll * parseFloat(controls.rollMultiplier);
+
+				if (window.modeTracker == "facetracker" || window.modeTracker == "artrackerWithFacetracker") {
+					window.yaw = yawOptimized;
+					window.pitch = pitchOptimized;
+					window.roll = rollOptimized;
+
+					console.log("face detected", window.yaw, window.pitch, window.roll);
+				}
+				
+				recognizedFace = true;
+			}
+			
         });
+		
     }
+
+	window.recognizedFace = recognizedFace;
 
     requestAnimationFrame(renderPrediction);
 }

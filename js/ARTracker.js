@@ -4,7 +4,7 @@ var ARTracker = {
 
             ARController.getUserMediaThreeScene({
                 maxARVideoSize: 640,
-                cameraParam: 'Data/camera_para.dat',
+                cameraParam: 'resources/data/camera_para.dat',
                 onSuccess: function(arScene, arController, arCamera) {
 
                     //document.body.className = arController.orientation;

@@ -19,9 +19,11 @@
         <script src="js/osc.min.js"></script>
         <script src="js/1euro.js"></script>
 
-        <script src="js/artoolkit.min.js"></script>
-        <script src="js/artoolkit.three.js"></script>
-        <script src="js/ARTracker.js"></script>
+ <script type="text/javascript" src="js/svd.js"></script> 
+  <script type="text/javascript" src="js/posit1.js"></script> 
+  <script type="text/javascript" src="js/cv.js"></script> 
+  <script type="text/javascript" src="js/aruco.js"></script> 
+        <script src="js/ARTracker2.js"></script>
 		
         <script src="js/Mach1SoundPlayer.js"></script>
         <script src="js/Mach1Decode.js"></script>
@@ -126,20 +128,20 @@
                             <label for="radio1" class="css-label">ARTracker + Facetracker</label>
                         </td>
                         <td>
-                            <input type="radio" name="mode" id="radio1" class="css-checkbox" value="artracker" onclick="selectTracker()" />
-                            <label for="radio1" class="css-label">ARTracker</label>
+                            <input type="radio" name="mode" id="radio2" class="css-checkbox" value="artracker" onclick="selectTracker()" />
+                            <label for="radio2" class="css-label">ARTracker</label>
                         </td>
                         <td>
-                            <input type="radio" name="mode" id="radio2" class="css-checkbox" value="facetracker" onclick="selectTracker()" />
-                            <label for="radio2" class="css-label">Facetracker</label>
+                            <input type="radio" name="mode" id="radio3" class="css-checkbox" value="facetracker" onclick="selectTracker()" />
+                            <label for="radio3" class="css-label">Facetracker</label>
                         </td>
                         <td>
-                            <input type="radio" name="mode" id="radio3" class="css-checkbox" value="device" onclick="selectTracker()" />
-                            <label for="radio3" class="css-label">Device</label>
+                            <input type="radio" name="mode" id="radio4" class="css-checkbox" value="device" onclick="selectTracker()" />
+                            <label for="radio4" class="css-label">Device</label>
                         </td>
                         <td>
-                            <input type="radio" name="mode" id="radio4" class="css-checkbox" value="touch" onclick="selectTracker()" />
-                            <label for="radio4" class="css-label">Touch</label>
+                            <input type="radio" name="mode" id="radio5" class="css-checkbox" value="touch" onclick="selectTracker()" />
+                            <label for="radio5" class="css-label">Touch</label>
                         </td>
                     </tr>
                 </table>
@@ -153,5 +155,25 @@
 
         <div id="stats" style="position:absolute;bottom:5px;left:5px;"></div>
         <div id="info" style="position: relative; margin: auto; margin-top: 50vh; text-align: center; font-size: 3em;">loading...</div>
+		
+
+		<!-- AR Part -->		
+		<video id="video" width=640 height=480 autoplay="true" style="display:none;"></video>
+		  <div style="width: 100%; display:none;">
+			<div style="width: 1500px; margin-left:auto; margin-right:auto;">
+			  <canvas id="canvas" style="width: 640px; height: 480px; float: left; border: solid 1px black;"></canvas>
+			  <div id="container" style="width: 640px; height: 480px; float: left; border: solid 1px black; background: green;"></div>
+			  <div style="clear: both;"></div>
+			  <div style="float: left; border: solid 1px black;">
+				<div id="container1" style="width: 640px; height: 480px; background: red;"></div>
+				<div id="pose1"></div>
+			  </div>
+			  <div style="float: left; border: solid 1px black;">
+				<div id="container2" style="width: 640px; height: 480px; background: blue;"></div>
+				<div id="pose2"></div>
+			  </div>
+			</div>
+		  </div>
+		  
     </body>
 </html>

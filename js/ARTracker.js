@@ -4,13 +4,17 @@ var ARTracker = {
 
             ARController.getUserMediaThreeScene({
                 maxARVideoSize: 640,
-                cameraParam: 'Data/camera_para-iPhone 5 rear 640x480 1.0m.dat',
+                cameraParam: 'Data/camera_para.dat',
                 onSuccess: function(arScene, arController, arCamera) {
 
                     //document.body.className = arController.orientation;
 
-                    arController.setPatternDetectionMode(artoolkit.AR_TEMPLATE_MATCHING_MONO_AND_MATRIX);
-					arController.setThresholdMode(artoolkit.AR_LABELING_THRESH_MODE_AUTO_MEDIAN);
+					arController.setPatternDetectionMode(artoolkit.AR_MATRIX_CODE_DETECTION);
+					//arController.setThresholdMode(artoolkit.AR_LABELING_THRESH_MODE_AUTO_OTSU);
+					arController.setMatrixCodeType(artoolkit.AR_MATRIX_CODE_3x3_HAMMING63);
+
+
+                   //arController.setPatternDetectionMode(artoolkit.AR_TEMPLATE_MATCHING_MONO_AND_MATRIX);
 
                     var renderer = new THREE.WebGLRenderer({
                         antialias: true
@@ -77,35 +81,64 @@ var ARTracker = {
                         );
                         sphere.material.flatShading;
                         sphere.position.z = 0.0;
-
-
-                        var markerRoot = arController.createThreeBarcodeMarker(i, 1);
+						
+						/*
+						arController.loadMarker('Data/pattern-m0'+(i+1)+'.patt', function(markerId) {
+							var markerRoot = arController.createThreeMarker(markerId);
+							markerRoot.add(sphere);
+							arScene.scene.add(markerRoot);
+						});
+						*/
+						///*
+                        var markerRoot = arController.createThreeBarcodeMarker(i,1);
                         markerRoot.add(sphere);
                         arScene.scene.add(markerRoot);
+						//*/
                     }
+					
+					/*
+					arController.loadMultiMarker('Data/multi-barcode.dat', function(marker, markerNum) {
+						
+						 var sphere = new THREE.Mesh(
+                            new THREE.SphereGeometry(1.0, 8, 8),
+                            new THREE.MeshNormalMaterial()
+                        );
+                        sphere.material.flatShading;
+                        sphere.position.z = 0.0;
+						
+						
+						// Create an object that tracks the marker transform.
+						var markerRoot = arController.createThreeMultiMarker(marker);
+						arScene.scene.add(sphere);
+						markerRoot.add(sphere);
+					});
+					*/
 
-                    var lastDetectedBarcodeRot = [];
+                    var lastDetectedBarcodeRot = [0,0,0];
                     var lastDetectedBarcodeTime = -1;
 
                     var detectedBarcodeMarkers = {};
                     arController.addEventListener('getMarker', function(ev) {
-                        var barcodeId = ev.data.marker.idMatrix;
-                        if (barcodeId !== -1 && barcodeId < maxCountBarcodes) {
-                            //console.log("saw a barcode marker with id", barcodeId);
+						
+                        var markerId = ev.data.marker.idMatrix; // ev.data.marker.id; //
+                        if (markerId > -1 && markerId < maxCountBarcodes ) { //&& ev.data.marker.dir == 2) { // && ev.data.marker.cf > 0.3) {
+                            
+							//console.log("saw a barcode marker with id", markerId, ev.data.marker.id, ev.data.marker.idMatrix );
+							//console.log("dir >> ", ev.data.marker.dir );
 
-                            var transform = ev.data.matrix;
-                            if (!detectedBarcodeMarkers[barcodeId]) {
-                                detectedBarcodeMarkers[barcodeId] = {
+                            var transform = ev.data.matrixGL_RH  ; // matrix;
+                            if (!detectedBarcodeMarkers[markerId]) {
+                                detectedBarcodeMarkers[markerId] = {
                                     visible: true,
-                                    matrix: new Float32Array(16)
+                                    matrix: new Float32Array(16),
                                 }
                             }
-                            detectedBarcodeMarkers[barcodeId].visible = true;
-                            detectedBarcodeMarkers[barcodeId].matrix.set(transform);
+                            detectedBarcodeMarkers[markerId].visible = true;
+                            detectedBarcodeMarkers[markerId].matrix.set(transform);
 
                             // get matrix
                             var mat = new THREE.Matrix4();
-                            mat.fromArray(detectedBarcodeMarkers[barcodeId].matrix, 0);
+                            mat.fromArray(detectedBarcodeMarkers[markerId].matrix, 0);
 
                             var worldPos = new THREE.Vector3();
                             var worldQuat = new THREE.Quaternion();
@@ -119,12 +152,18 @@ var ARTracker = {
                             var y = THREE.Math.radToDeg(worldRot.y);
                             var z = THREE.Math.radToDeg(worldRot.z);
 
-							//console.log("barcodeId", barcodeId);
+							console.log("markerId", markerId);
 
+	 
+							var x_ = x > 0 ? -(180 - x) : x + 180;
+							var y_ = window.modeTracker == "artracker" ? (y + markerId * 360.0 / 6) : (y - 90 + (360.0 - markerId * 360.0) / 2 );
+							//if(y_ < 0) y_ = 360 + y_;
+	 
+							var smooth = 0.0;
                             lastDetectedBarcodeRot = [
-                                x > 0 ? -(180 - x) : x + 180,
-                               window.modeTracker == "artracker" ? (y + barcodeId * 360.0 / 6 ) : (y - 90 + (360.0 - barcodeId * 360.0) / 2 ),
-                                z
+                               lastDetectedBarcodeRot[0] * smooth + x_ * (1-smooth), 
+                               lastDetectedBarcodeRot[1] * smooth + y_ * (1-smooth),
+                               lastDetectedBarcodeRot[2] * smooth + z * (1-smooth)
                             ];
                             lastDetectedBarcodeTime = performance.now();
                         }

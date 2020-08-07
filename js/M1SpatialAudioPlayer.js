@@ -31,7 +31,7 @@ boseARDeviceElement.addEventListener("rotation", event => {
     boseARConfig.euler.x = (boseARConfig.euler.x - boseARConfig.eulerOffset.x) * boseARConfig.eulerScalar.x;
     boseARConfig.euler.y = (boseARConfig.euler.y - boseARConfig.eulerOffset.y) * boseARConfig.eulerScalar.y;
     boseARConfig.euler.z = (boseARConfig.euler.z - boseARConfig.eulerOffset.z) * boseARConfig.eulerScalar.z;
-    
+
     const pitch = radians_to_degrees(boseARConfig.euler.x);
     const yaw = radians_to_degrees(boseARConfig.euler.y);
     const roll = radians_to_degrees(boseARConfig.euler.z);
@@ -83,7 +83,7 @@ function handleDeviceOrientation(event) {
 
 window.addEventListener("deviceorientation", handleDeviceOrientation);
 
-// ------------------------ 
+// ------------------------
 controls = new(function() {
     this.nPoint = 468;
     this.yawMultiplier = 2;
@@ -227,10 +227,39 @@ async function renderPrediction() {
     requestAnimationFrame(renderPrediction);
 }
 
+// function ProgressBar() {
+//   this.element = '<img src="/img/progress.svg">';
+// }
+//
+// ProgressBar.prototype.init = function() {
+//
+// }
+
+const progress = {
+  element: '<img class="svg-loader" src="/img/first.svg"><p>loading...</p><p id="progress"></p>',
+  change(current) {
+    const progress = document.getElementById('progress');
+    console.log('here');
+    progress.innerHTML = `${current}%`;
+  }
+}
+
 async function trackerMain() {
     var info = document.getElementById("info");
-    info.innerHTML = "loading...";
+    // info.innerHTML = 'loading...';
+    info.innerHTML = progress.element;
     document.getElementById("main").style.display = "none";
+
+    var timer = setInterval(function() {
+        progress.change(sound.getCountOfReadySound());
+        if (sound.isReady()) {
+
+            clearInterval(timer);
+
+            info.innerHTML = "";
+            document.getElementById("main").style.display = "";
+        }
+    }, 500);
 
     await tf.setBackend("webgl");
 
@@ -259,14 +288,7 @@ async function trackerMain() {
     renderPrediction();
 
     // wait for loaded audio
-    var timer = setInterval(function() {
-        if (sound.isReady) {
-            clearInterval(timer);
-            
-            info.innerHTML = "";
-            document.getElementById("main").style.display = "";
-        }
-    }, 1000);
+
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -293,7 +315,7 @@ function DisplayDebug() {
   } else {
     boseaStats.style.display = "none";
   }
-} 
+}
 
 // ------------------------
 // Mach1 Spatial & Audio Handling

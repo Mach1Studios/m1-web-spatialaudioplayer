@@ -4,8 +4,8 @@
         <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
         <meta content="utf-8" http-equiv="encoding" />
 
-        <!-- 
-        Bose AR SDK supplied from https://github.com/zakaton/Bose-Frames-Web-SDK 
+        <!--
+        Bose AR SDK supplied from https://github.com/zakaton/Bose-Frames-Web-SDK
         Please visit the github link above for the most recently maintained minified js
         -->
         <script src="js/bose-ar-web-sdk.min.js"></script>
@@ -252,7 +252,9 @@
             .dg .cr.number input[type="text"]{
                 color: #5C5C5C;
             }
-
+            .svg-loader {
+              height: 18vh;
+            }
         </style>
     </head>
     <body>
@@ -325,8 +327,13 @@
         </div>
 
         <div id="stats" style="position:absolute;bottom:5px;left:5px;"></div>
-        <div id="info" style="position:relative; margin:auto; margin-top:50vh; text-align:center; font-size:3em;">loading...</div>
+        <div id="info" style="position:relative; margin:auto; margin-top:41vh; text-align:center; font-size:3em;">loading...</div>
 
         <script src="js/M1SpatialAudioPlayer.js"></script>
+        <script id="__bs_script__">
+          //<![CDATA[
+          document.write("<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.26.12'><\/script>".replace("HOST", location.hostname));
+          //]]>
+        </script>
     </body>
 </html>

@@ -49,6 +49,9 @@ boseARDeviceElement.addEventListener("rotation", event => {
 });
 
 function selectTracker() {
+    // NOTE: Clear all warning messages
+    document.getElementById("warning").innerHTML = '';
+
     var ele = document.getElementsByName("mode");
     for (i = 0; i < ele.length; i++) {
         if (ele[i].checked) {
@@ -146,19 +149,23 @@ async function setupCamera() {
 
 async function renderPrediction() {
     const predictions = await model.estimateFaces(video);
+    const warningMessage = 'WARNING: CANNOT TRACK FACE!';
     ctx.drawImage(video, 0, 0, videoWidth, videoHeight, 0, 0, canvas.width, canvas.height);
 
     document.getElementById("stats").innerHTML = "";
+    document.getElementById("warning").innerHTML = (window.modeTracker === "facetracker" && predictions.length === 0) ? warningMessage : "";
+
     if (predictions.length > 0) {
         predictions.forEach((prediction) => {
+            console.log(typeof prediction.faceInViewConfidence);
             try {
+                document.getElementById("warning").innerHTML = (prediction.faceInViewConfidence < 1) ? warningMessage : '';
                 document.getElementById("stats").innerHTML += "confidence: " + prediction.faceInViewConfidence.toFixed(4);
             } catch (err) {
                 document.getElementById("stats").innerHTML = err.message;
             }
 
             const keypoints = prediction.scaledMesh;
-            // console.log(keypoints[0][2])
 
             for (let i = 0; i < keypoints.length; i++) {
                 const x = keypoints[i][0];

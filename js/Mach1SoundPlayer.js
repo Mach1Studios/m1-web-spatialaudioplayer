@@ -282,7 +282,6 @@ function Mach1SoundPlayer() {
     };
 
     this.getCountOfReadySound = function () {
-      console.error(countOfReadySound / SOUND_COUNT * 100);
       return (countOfReadySound / SOUND_COUNT * 100).toFixed(0);
     }
 

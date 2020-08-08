@@ -75,7 +75,7 @@ function handleDeviceOrientation(event) {
     var x = event.beta;
     var y = event.alpha;
     var z = event.gamma;
-    console.log(x, y, z);
+    console.info(x, y, z);
 
     if (window.modeTracker == "device") {
         window.yaw = x;
@@ -157,7 +157,6 @@ async function renderPrediction() {
 
     if (predictions.length > 0) {
         predictions.forEach((prediction) => {
-            console.log(typeof prediction.faceInViewConfidence);
             try {
                 document.getElementById("warning").innerHTML = (prediction.faceInViewConfidence < 1) ? warningMessage : '';
                 document.getElementById("stats").innerHTML += "confidence: " + prediction.faceInViewConfidence.toFixed(4);
@@ -238,7 +237,6 @@ const progress = {
   element: '<img class="svg-loader" src="/img/spinner.svg"><p>loading...</p><p id="progress"></p>',
   change(current) {
     const progress = document.getElementById('progress');
-    console.log('here');
     progress.innerHTML = `${current}%`;
   }
 }

@@ -236,25 +236,27 @@ const progress = {
   }
 }
 
+const waitingSounds = () => new Promise((resolve, reject) => {
+    let timer = setInterval(() => {
+        progress.change(sound.getCountOfReadySound()); // update loading info
+        if (sound.isReady()) {
+            clearInterval(timer);
+            resolve();
+        }
+    }, 500);
+});
+
 async function trackerMain() {
     var info = document.getElementById("info");
     info.innerHTML = progress.element;
     document.getElementById("main").style.display = "none";
 
-    var timer = setInterval(function() {
-        progress.change(sound.getCountOfReadySound());
-        if (sound.isReady()) {
+    await Promise.all([
+      waitingSounds(),
+      tf.setBackend("webgl"),
+      setupCamera(),
+    ]);
 
-            clearInterval(timer);
-
-            info.innerHTML = "";
-            document.getElementById("main").style.display = "";
-        }
-    }, 500);
-
-    await tf.setBackend("webgl");
-
-    await setupCamera();
     video.play();
     videoWidth = video.videoWidth;
     videoHeight = video.videoHeight;
@@ -276,10 +278,11 @@ async function trackerMain() {
     model = await facemesh.load({
         maxFaces: 1
     });
-    renderPrediction();
+    await renderPrediction();
 
     // wait for loaded audio
-
+    info.innerHTML = "";
+    document.getElementById("main").style.display = "";
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {

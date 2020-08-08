@@ -227,16 +227,8 @@ async function renderPrediction() {
     requestAnimationFrame(renderPrediction);
 }
 
-// function ProgressBar() {
-//   this.element = '<img src="/img/progress.svg">';
-// }
-//
-// ProgressBar.prototype.init = function() {
-//
-// }
-
 const progress = {
-  element: '<img class="svg-loader" src="/img/first.svg"><p>loading...</p><p id="progress"></p>',
+  element: '<img class="svg-loader" src="/img/spinner.svg"><p>loading...</p><p id="progress"></p>',
   change(current) {
     const progress = document.getElementById('progress');
     console.log('here');
@@ -246,7 +238,6 @@ const progress = {
 
 async function trackerMain() {
     var info = document.getElementById("info");
-    // info.innerHTML = 'loading...';
     info.innerHTML = progress.element;
     document.getElementById("main").style.display = "none";
 
@@ -297,7 +288,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 })
 
 function DisplayDebug() {
-  var output = document.getElementById("3dview");
+  var output = document.getElementById("modelview");
   if (output.style.display === "none") {
     output.style.display = "";
   } else {
@@ -380,8 +371,8 @@ var mouseY = 0;
 var targetX = 0;
 var targetY = 0;
 
-var width = 640; //window.innerWidth;
-var height = 480; //window.innerHeight;
+var width = 320; //window.innerWidth;
+var height = 240; //window.innerHeight;
 
 var windowHalfX;
 var windowHalfY;
@@ -404,7 +395,7 @@ window.createOneEuroFilters = function createOneEuroFilters() {
 
 function init() {
     mainWindow = document.getElementById("main");
-    container = document.getElementById("3dview"); //document.createElement("div");
+    container = document.getElementById("modelview"); //document.createElement("div");
 
     camera = new THREE.PerspectiveCamera(27, width / height, 1, 10000);
     camera.position.z = 2500;
@@ -437,7 +428,7 @@ function init() {
         createScene(gltf.scene.children[0].geometry, 100, material);
     });
 
-    renderer = new THREE.WebGLRenderer();
+    renderer = new THREE.WebGLRenderer({ alpha: true });
     renderer.setSize(width, height);
     container.appendChild(renderer.domElement);
 

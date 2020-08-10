@@ -4,8 +4,10 @@
         <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
         <meta content="utf-8" http-equiv="encoding" />
 
-        <!-- 
-        Bose AR SDK supplied from https://github.com/zakaton/Bose-Frames-Web-SDK 
+        <link rel="preload" href="/img/spinner.svg" as="image">
+
+        <!--
+        Bose AR SDK supplied from https://github.com/zakaton/Bose-Frames-Web-SDK
         Please visit the github link above for the most recently maintained minified js
         -->
         <script src="js/bose-ar-web-sdk.min.js"></script>
@@ -43,6 +45,11 @@
                 font-style: normal;
                 font-weight: 500;
             }
+            html, body {
+              height: 100%;
+              margin: 0px;
+              overflow: hidden;
+            }
             * {
                 font-family: 'Roboto Mono', monospace;
                 font-size: 12px;
@@ -77,12 +84,35 @@
               margin-bottom: 7px;
               position: absolute;
             }
-            #compassContainer {
+            #compass {
+                height: 18vh;
+            }
+            #modelview, #compassContainer {
                 text-align: center;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                margin-top: 25vh;
+
+                padding-top: 41vh;
+            }
+            #modelview {
+              padding-top: 5vh;
+            }
+            #modelview canvas {
+              background: transparent;
+            }
+            #warning {
+              position:relative;
+              margin:auto;
+              text-align:center;
+              font-size:2em;
+              padding: 1.5em;
+              color: #5C5C5C;
+            }
+            #boseRate {
+              overflow: hidden;
+              min-width: fit-content;
+              width: 100%;
             }
             .containerOuter {
               background: white;
@@ -92,8 +122,10 @@
             .containerInner {
               position: relative;
               margin: 20px;
-              overflow: scroll;
               width: 160px;
+            }
+            .containerInner .button:last-child {
+              margin-bottom: 5px;
             }
             .hidden {
               display: none;
@@ -252,24 +284,13 @@
             .dg .cr.number input[type="text"]{
                 color: #5C5C5C;
             }
-
+            .svg-loader {
+              height: 18vh;
+            }
         </style>
     </head>
     <body>
         <div id="main" style="display:none;">
-            <div class="container">
-                <div id="compassContainer">
-                    <img id="compass" src="img/nav-compass.svg" width="150" height="150"/>
-                </div>
-            </div>
-            <div class="container" style="height:50vh;width:auto;bottom:0px;">
-                <div class="canvas-wrapper">
-                    <canvas id="output" style="display:none;"></canvas>
-                    <video id="video" playsinline style="-webkit-transform: scaleX(-1); transform: scaleX(-1); visibility: hidden; width: auto; height: auto;"></video>
-                </div>
-                <div class="canvas-wrapper" id="3dview" style="width: 640px; height: 480px;display:none;">
-                </div>
-            </div>
             <div class="containerOuter" style="position:absolute; top:20px; left:30px;">
               <div class="containerInner" style="min-height: 190px;">
                 <input type="radio" name="mode" id="radio1" class="hidden" checked="checked" value="facetracker" onclick="selectTracker()">
@@ -280,26 +301,6 @@
                 <label class="entry" for="radio3"><div class="circle"></div><div class="entry-label">Touch</div></label>
                 <input type="radio" name="mode" id="radio4" class="hidden" value="bosear" onclick="selectTracker()" >
                 <label class="entry" for="radio4"><div class="circle"></div><div class="entry-label" style="margin-top:-3px;">BoseAR&nbsp;<bose-ar-device></bose-ar-device></div></label>
-                <div id="bosearstats" style="display: none; position: relative; top: 200px;">
-                    <form id="Rotation">
-                        <h3>Rotation</h3>
-                        <select id="boseRate" size="5" oninput="enableBoseAR()">
-                            <option selected value=0>disabled</option>
-                            <option value=20>very fast (20ms)</option>
-                            <option value=40>fast (40ms)</option>
-                            <option value=80>normal (80ms)</option>
-                            <option value=160>slow (160ms)</option>
-                        </select>
-                        <br>
-                        <br>
-                        <label for=rotationYaw>yaw&nbsp;&nbsp;</label>
-                        <input id=rotationYaw readonly size=2><br>
-                        <label for=rotationPitch>pitch</label>
-                        <input id=rotationPitch readonly size=2><br>
-                        <label for=rotationRoll>roll&nbsp;</label>
-                        <input id=rotationRoll readonly size=2>
-                    </form>
-                </div>
                 <div class="highlight"></div>
                 <div class="overlay"></div>
               </div>
@@ -322,11 +323,53 @@
                     <button onclick="DisplayDebug()" class="button">Debug</button>
                 </div>
             </div>
+            <div id="bosearstats" class="containerOuter" style="display: none; position: absolute; top: 20px; left: 450px;">
+                <div class="containerInner">
+                    <form id="Rotation">
+                        <h3>Rotation</h3>
+                        <select id="boseRate" size="5" oninput="enableBoseAR()">
+                            <option selected value=0>disabled</option>
+                            <option value=20>very fast (20ms)</option>
+                            <option value=40>fast (40ms)</option>
+                            <option value=80>normal (80ms)</option>
+                            <option value=160>slow (160ms)</option>
+                        </select>
+                        <br>
+                        <br>
+                        <label for=rotationYaw>yaw&nbsp;&nbsp;</label>
+                        <input id=rotationYaw readonly size=2><br>
+                        <label for=rotationPitch>pitch</label>
+                        <input id=rotationPitch readonly size=2><br>
+                        <label for=rotationRoll>roll&nbsp;</label>
+                        <input id=rotationRoll readonly size=2>
+                    </form>
+                </div>
+            </div>
+            <div class="container">
+                <div id="compassContainer">
+                    <img id="compass" src="/img/nav-compass.svg"/>
+                </div>
+                <div id="warning"></div>
+            </div>
+            <div class="container" style="position: absolute; bottom: 5px; right: 5px;">
+                <div class="canvas-wrapper">
+                    <canvas id="output" style="display:none;"></canvas>
+                    <video id="video" playsinline style="-webkit-transform: scaleX(-1); transform: scaleX(-1); visibility: hidden; width: auto; height: auto; position: absolute; bottom: 5px; right: 5px;"></video>
+                </div>
+            </div>
+            <div class="container">
+                <div id="modelview" class="canvas-wrapper" style="display:none;"></div>
+            </div>
         </div>
 
         <div id="stats" style="position:absolute;bottom:5px;left:5px;"></div>
-        <div id="info" style="position:relative; margin:auto; margin-top:50vh; text-align:center; font-size:3em;">loading...</div>
+        <div id="info" style="position:relative; margin:auto; margin-top:41vh; text-align:center; font-size:3em;"></div>
 
         <script src="js/M1SpatialAudioPlayer.js"></script>
+        <script id="__bs_script__">
+          //<![CDATA[
+          document.write("<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.26.12'><\/script>".replace("HOST", location.hostname));
+          //]]>
+        </script>
     </body>
 </html>

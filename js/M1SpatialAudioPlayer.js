@@ -252,7 +252,8 @@ const waitingSounds = () => new Promise((resolve, reject) => {
 });
 
 async function trackerMain() {
-    var info = document.getElementById("info");
+    const info = document.getElementById("info");
+
     info.innerHTML = progress.element;
     document.getElementById("main").style.display = "none";
 
@@ -261,6 +262,7 @@ async function trackerMain() {
       tf.setBackend("webgl"),
       setupCamera(),
     ]);
+
 
     video.play();
     videoWidth = video.videoWidth;

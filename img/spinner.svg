@@ -3,136 +3,136 @@
     d="M359.669 82.3528L299.992 22.6765C287.886 10.5703 268.258 10.5703 256.152 22.6764L196.476 82.3528C184.37 94.4589 184.37 114.087 196.476 126.193L256.152 185.869C268.258 197.975 287.886 197.975 299.992 185.869L359.669 126.193C371.775 114.087 371.775 94.4589 359.669 82.3528Z"
     fill="black"
     fill-opacity="0">
-    <animate id="1" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="0s;24.begin + 1.1s"/>
+    <animate id="id1" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="0s;id24.begin + 1.1s"/>
   </path>
   <path
     d="M306.471 67.5817L233.384 25.3838C218.557 16.8234 199.599 21.9031 191.038 36.7298L148.84 109.817C140.28 124.643 145.36 143.602 160.186 152.163L233.273 194.361C248.1 202.921 267.059 197.841 275.619 183.015L317.817 109.928C326.377 95.1011 321.298 76.1421 306.471 67.5817Z"
     fill="black"
     fill-opacity="0">
-    <animate id="2" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="1.begin + 0.1s"/>
+    <animate id="id2" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="id1.begin + 0.1s"/>
   </path>
   <path
     d="M251.265 67.1018L169.747 45.2601C153.21 40.8292 136.212 50.6432 131.781 67.1802L109.939 148.698C105.508 165.235 115.322 182.233 131.859 186.664L213.377 208.506C229.914 212.936 246.912 203.122 251.343 186.585L273.185 105.067C277.616 88.5305 267.802 71.5326 251.265 67.1018Z"
     fill="black"
     fill-opacity="0">
-    <animate id="3" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="2.begin + 0.1s"/>
+    <animate id="id3" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="id2.begin + 0.1s"/>
   </path>
   <path
     d="M197.816 80.9077H113.42C96.2991 80.9077 82.4199 94.7869 82.4199 111.908V196.304C82.4199 213.424 96.2991 227.304 113.42 227.304H197.816C214.937 227.304 228.816 213.424 228.816 196.304V111.908C228.816 94.7869 214.937 80.9077 197.816 80.9077Z"
     fill="black"
     fill-opacity="0">
-    <animate id="4" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="3.begin + 0.1s"/>
+    <animate id="id4" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="id3.begin + 0.1s"/>
   </path>
   <path
     d="M149.761 108.087L68.2427 129.929C51.7057 134.36 41.8917 151.358 46.3226 167.895L68.1643 249.413C72.5951 265.95 89.5929 275.764 106.13 271.333L187.648 249.491C204.185 245.06 213.999 228.062 209.568 211.525L187.726 130.007C183.295 113.47 166.298 103.656 149.761 108.087Z"
     fill="black"
     fill-opacity="0">
-    <animate id="5" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="4.begin + 0.1s"/>
+    <animate id="id5" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="id4.begin + 0.1s"/>
   </path>
   <path
     d="M110.365 146.774L37.2786 188.972C22.452 197.533 17.3722 216.492 25.9326 231.318L68.1305 304.405C76.691 319.232 95.6499 324.311 110.477 315.751L183.563 273.553C198.39 264.993 203.47 246.034 194.909 231.207L152.711 158.12C144.151 143.294 125.192 138.214 110.365 146.774Z"
     fill="black"
     fill-opacity="0">
-    <animate id="6" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="5.begin + 0.1s"/>
+    <animate id="id6" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="id5.begin + 0.1s"/>
   </path>
   <path
     d="M82.3523 194.346L22.676 254.023C10.5698 266.129 10.5698 285.757 22.6759 297.863L82.3523 357.539C94.4584 369.645 114.086 369.645 126.192 357.539L185.869 297.863C197.975 285.757 197.975 266.129 185.869 254.023L126.193 194.346C114.086 182.24 94.4584 182.24 82.3523 194.346Z"
     fill="black"
     fill-opacity="0">
-    <animate id="7" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="6.begin + 0.1s"/>
+    <animate id="id7" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="id6.begin + 0.1s"/>
   </path>
   <path
     d="M67.5857 247.555L25.3877 320.642C16.8273 335.468 21.907 354.427 36.7337 362.988L109.821 405.186C124.647 413.746 143.606 408.666 152.167 393.84L194.364 320.753C202.925 305.926 197.845 286.967 183.018 278.407L109.932 236.209C95.105 227.649 76.1461 232.728 67.5857 247.555Z"
     fill="black"
     fill-opacity="0">
-    <animate id="8" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="7.begin + 0.1s"/>
+    <animate id="id8" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="id7.begin + 0.1s"/>
   </path>
   <path
     d="M67.0949 302.736L45.2533 384.254C40.8224 400.791 50.6364 417.789 67.1734 422.22L148.691 444.061C165.228 448.492 182.226 438.678 186.657 422.141L208.499 340.623C212.93 324.086 203.116 307.089 186.579 302.658L105.061 280.816C88.5236 276.385 71.5258 286.199 67.0949 302.736Z"
     fill="black"
     fill-opacity="0">
-    <animate id="9" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="8.begin + 0.1s"/>
+    <animate id="id9" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="id8.begin + 0.1s"/>
   </path>
   <path
     d="M80.9033 356.198L80.9033 440.594C80.9033 457.715 94.7825 471.594 111.903 471.594L196.299 471.594C213.42 471.594 227.299 457.715 227.299 440.594L227.299 356.198C227.299 339.077 213.42 325.198 196.299 325.198L111.903 325.198C94.7825 325.198 80.9033 339.077 80.9033 356.198Z"
     fill="black"
     fill-opacity="0">
-    <animate id="10" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="9.begin + 0.1s"/>
+    <animate id="id10" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="id9.begin + 0.1s"/>
   </path>
   <path
     d="M108.091 404.259L129.932 485.777C134.363 502.314 151.361 512.128 167.898 507.697L249.416 485.856C265.953 481.425 275.767 464.427 271.336 447.89L249.494 366.372C245.064 349.835 228.066 340.021 211.529 344.452L130.011 366.294C113.474 370.724 103.66 387.722 108.091 404.259Z"
     fill="black"
     fill-opacity="0">
-    <animate id="11" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="10.begin + 0.1s"/>
+    <animate id="id11" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="id10.begin + 0.1s"/>
   </path>
   <path
     d="M146.771 443.641L188.969 516.727C197.529 531.554 216.488 536.634 231.315 528.073L304.402 485.876C319.228 477.315 324.308 458.356 315.748 443.53L273.55 370.443C264.989 355.616 246.03 350.536 231.204 359.097L158.117 401.295C143.29 409.855 138.21 428.814 146.771 443.641Z"
     fill="black"
     fill-opacity="0">
-    <animate id="12" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="11.begin + 0.1s"/>
+    <animate id="id12" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="id11.begin + 0.1s"/>
   </path>
   <path
     d="M194.331 471.662L254.008 531.338C266.114 543.444 285.742 543.444 297.848 531.338L357.524 471.662C369.63 459.556 369.63 439.928 357.524 427.822L297.848 368.145C285.742 356.039 266.114 356.039 254.008 368.145L194.331 427.822C182.225 439.928 182.225 459.556 194.331 471.662Z"
     fill="black"
     fill-opacity="0">
-    <animate id="13" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="12.begin + 0.1s"/>
+    <animate id="id13" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="id12.begin + 0.1s"/>
   </path>
   <path
     d="M247.541 486.422L320.628 528.62C335.454 537.181 354.413 532.101 362.974 517.274L405.172 444.187C413.732 429.361 408.652 410.402 393.826 401.841L320.739 359.643C305.912 351.083 286.953 356.163 278.393 370.989L236.195 444.076C227.634 458.903 232.714 477.862 247.541 486.422Z"
     fill="black"
     fill-opacity="0">
-    <animate id="14" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="13.begin + 0.1s"/>
+    <animate id="id14" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="id13.begin + 0.1s"/>
   </path>
   <path
     d="M302.742 486.919L384.26 508.76C400.797 513.191 417.795 503.377 422.226 486.84L444.068 405.322C448.498 388.785 438.684 371.788 422.147 367.357L340.63 345.515C324.093 341.084 307.095 350.898 302.664 367.435L280.822 448.953C276.391 465.49 286.205 482.488 302.742 486.919Z"
     fill="black"
     fill-opacity="0">
-    <animate id="15" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="14.begin + 0.1s"/>
+    <animate id="id15" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="id14.begin + 0.1s"/>
   </path>
   <path
     d="M356.203 473.098L440.599 473.098C457.719 473.098 471.599 459.219 471.599 442.098L471.599 357.702C471.599 340.581 457.719 326.702 440.599 326.702L356.203 326.702C339.082 326.702 325.203 340.581 325.203 357.702L325.203 442.098C325.203 459.219 339.082 473.098 356.203 473.098Z"
     fill="black"
     fill-opacity="0">
-    <animate id="16" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="15.begin + 0.1s"/>
+    <animate id="id16" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="id15.begin + 0.1s"/>
   </path>
   <path
     d="M404.261 445.925L485.779 424.083C502.316 419.652 512.13 402.654 507.699 386.117L485.857 304.599C481.426 288.062 464.429 278.248 447.892 282.679L366.373 304.521C349.836 308.952 340.022 325.949 344.453 342.486L366.295 424.004C370.726 440.541 387.724 450.355 404.261 445.925Z"
     fill="black"
     fill-opacity="0">
-    <animate id="17" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="16.begin + 0.1s"/></path>
+    <animate id="id17" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="id16.begin + 0.1s"/></path>
   <path
     d="M443.644 407.238L516.731 365.04C531.558 356.48 536.638 337.521 528.077 322.694L485.879 249.607C477.319 234.781 458.36 229.701 443.533 238.261L370.446 280.459C355.62 289.02 350.54 307.978 359.1 322.805L401.298 395.892C409.859 410.719 428.818 415.798 443.644 407.238Z"
     fill="black"
     fill-opacity="0">
-    <animate id="18" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="17.begin + 0.1s"/></path>
+    <animate id="id18" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="id17.begin + 0.1s"/></path>
   <path
     d="M471.662 359.654L531.339 299.978C543.445 287.872 543.445 268.244 531.339 256.138L471.662 196.461C459.556 184.355 439.928 184.355 427.822 196.461L368.146 256.138C356.04 268.244 356.04 287.872 368.146 299.978L427.822 359.654C439.928 371.76 459.556 371.76 471.662 359.654Z"
     fill="black"
     fill-opacity="0">
-    <animate id="19" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="18.begin + 0.1s"/></path>
+    <animate id="id19" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="id18.begin + 0.1s"/></path>
   <path
     d="M486.418 306.456L528.616 233.369C537.177 218.542 532.097 199.583 517.27 191.023L444.183 148.825C429.357 140.265 410.398 145.344 401.837 160.171L359.639 233.258C351.079 248.085 356.159 267.043 370.985 275.604L444.072 317.802C458.899 326.362 477.858 321.282 486.418 306.456Z"
     fill="black"
     fill-opacity="0">
-    <animate id="20" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="19.begin + 0.1s"/></path>
+    <animate id="id20" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="id19.begin + 0.1s"/></path>
   <path
     d="M486.913 251.259L508.755 169.741C513.185 153.204 503.371 136.206 486.834 131.775L405.316 109.933C388.779 105.503 371.782 115.316 367.351 131.853L345.509 213.371C341.078 229.908 350.892 246.906 367.429 251.337L448.947 273.179C465.484 277.61 482.482 267.796 486.913 251.259Z"
     fill="black"
     fill-opacity="0">
-    <animate id="21" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="20.begin + 0.1s"/></path>
+    <animate id="id21" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="id20.begin + 0.1s"/></path>
   <path
     d="M473.094 197.811L473.094 113.415C473.094 96.2942 459.215 82.415 442.094 82.415L357.698 82.415C340.577 82.415 326.698 96.2942 326.698 113.415L326.698 197.811C326.698 214.932 340.577 228.811 357.698 228.811L442.094 228.811C459.215 228.811 473.094 214.932 473.094 197.811Z"
     fill="black"
     fill-opacity="0">
-    <animate id="22" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="21.begin + 0.1s"/></path>
+    <animate id="id22" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="id21.begin + 0.1s"/></path>
   <path
     d="M445.903 149.744L424.061 68.2261C419.63 51.6891 402.632 41.8751 386.095 46.306L304.577 68.1477C288.04 72.5785 278.226 89.5763 282.657 106.113L304.499 187.631C308.93 204.168 325.927 213.982 342.464 209.551L423.982 187.71C440.519 183.279 450.333 166.281 445.903 149.744Z"
     fill="black"
     fill-opacity="0">
-    <animate id="23" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="22.begin + 0.1s"/></path>
+    <animate id="id23" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="id22.begin + 0.1s"/></path>
   <path
     d="M407.234 110.362L365.036 37.2752C356.476 22.4486 337.517 17.3688 322.69 25.9292L249.603 68.1271C234.777 76.6876 229.697 95.6465 238.257 110.473L280.455 183.56C289.016 198.387 307.975 203.466 322.801 194.906L395.888 152.708C410.715 144.148 415.794 125.189 407.234 110.362Z"
     fill="black"
     fill-opacity="0">
-    <animate id="24" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="23.begin + 0.1s"/></path>
+    <animate id="id24" attributeName="fill-opacity" values="0; 0.1; 0.2; 0.3; 0.2; 0.1; 0" dur="0.7s" calcMode="paced" begin="id23.begin + 0.1s"/></path>
 </svg>

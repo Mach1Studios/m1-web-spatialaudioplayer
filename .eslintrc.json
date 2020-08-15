@@ -1,0 +1,28 @@
+{
+    "env": {
+        "browser": true,
+        "es2020": true
+    },
+    "globals": {
+      "THREE": "readonly"
+    },
+    "extends": [
+        "airbnb-base"
+    ],
+    "parserOptions": {
+        "ecmaVersion": 11,
+        "sourceType": "module"
+    },
+    "rules": {
+        "no-console": "off",
+        "no-param-reassign": ["error", { "props": false }],
+        "sort-keys": "error",
+        "comma-dangle": ["error", {
+            "arrays": "ignore",
+            "objects": "ignore",
+            "imports": "ignore",
+            "exports": "ignore",
+            "functions": "ignore"
+        }]
+    }
+}

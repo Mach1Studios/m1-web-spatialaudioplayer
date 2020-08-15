@@ -1,6 +1,29 @@
 // ------------------------
 window.modeTracker = '';
 
+/**
+ * Default contrlols configuration
+ * @type {Object}
+ */
+const controls = {
+  yawMultiplier: 2,
+  pitchMultiplier: 1,
+  rollMultiplier: 1,
+  FOV: 35,
+  filterSpeed: 0.9,
+  oneEuroFilterBeta: 0.06,
+
+  nPoint: 468,
+};
+
+const Player = new Mach1SoundPlayer();
+const DecodeModule = new Mach1DecodeModule();
+const osc = new OSC();
+
+function radiansToDegrees(radians) {
+  return radians * (180 / Math.PI);
+}
+
 const boseARDeviceElement = document.querySelector('bose-ar-device');
 const boseAROrder = 'YXZ';
 const boseARConfig = {
@@ -31,13 +54,13 @@ boseARDeviceElement.addEventListener('rotation', (event) => {
   boseARConfig.euler.y = (boseARConfig.euler.y - boseARConfig.eulerOffset.y) * boseARConfig.eulerScalar.y;
   boseARConfig.euler.z = (boseARConfig.euler.z - boseARConfig.eulerOffset.z) * boseARConfig.eulerScalar.z;
 
-  const pitch = radians_to_degrees(boseARConfig.euler.x);
-  const yaw = radians_to_degrees(boseARConfig.euler.y);
-  const roll = radians_to_degrees(boseARConfig.euler.z);
+  const pitch = radiansToDegrees(boseARConfig.euler.x);
+  const yaw = radiansToDegrees(boseARConfig.euler.y);
+  const roll = radiansToDegrees(boseARConfig.euler.z);
 
-  // rotationPitch.value = pitch;
-  // rotationYaw.value = yaw;
-  // rotationRoll.value = roll;
+  document.getElementById('rotationPitch').value = pitch;
+  document.getElementById('rotationYaw').value = yaw;
+  document.getElementById('rotationRoll').value = roll;
 
   if (window.modeTracker === 'bosear') {
     // TODO: reimplement multipliers and reset all to 1 when `bosear` mode selected
@@ -74,7 +97,6 @@ function handleDeviceOrientation(event) {
   const x = event.beta;
   const y = event.alpha;
   const z = event.gamma;
-  console.info(x, y, z);
 
   if (window.modeTracker === 'device') {
     window.yaw = x;
@@ -84,17 +106,6 @@ function handleDeviceOrientation(event) {
 }
 
 window.addEventListener('deviceorientation', handleDeviceOrientation);
-
-// ------------------------
-controls = new (function () {
-  this.nPoint = 468;
-  this.yawMultiplier = 2;
-  this.pitchMultiplier = 1;
-  this.rollMultiplier = 1;
-  this.FOV = 35;
-  this.filterSpeed = 0.9;
-  this.oneEuroFilterBeta = 0.06;
-})();
 
 function setupDatGui() {
   const gui = new dat.GUI();
@@ -106,13 +117,9 @@ function setupDatGui() {
   gui.add(controls, 'filterSpeed', 0.1, 1.0);
 
   gui.add(controls, 'oneEuroFilterBeta', 0.05, 0.1).onChange(() => {
-    createOneEuroFilters();
+    window.createOneEuroFilters();
   });
   gui.close();
-}
-
-function radians_to_degrees(radians) {
-  return radians * (180 / Math.PI);
 }
 
 // TODO: Apply isMobile returned bools to Device modes
@@ -139,7 +146,7 @@ async function setupCamera() {
   });
   video.srcObject = stream;
 
-  return Promise.resolve();
+  // return Promise.resolve();
 
   return new Promise((resolve) => {
     video.onloadedmetadata = () => {
@@ -154,7 +161,9 @@ async function renderPrediction() {
   ctx.drawImage(video, 0, 0, videoWidth, videoHeight, 0, 0, canvas.width, canvas.height);
 
   document.getElementById('stats').innerHTML = '';
-  document.getElementById('warning').innerHTML = (window.modeTracker === 'facetracker' && predictions.length === 0) ? warningMessage : '';
+  document.getElementById('warning').innerHTML = (window.modeTracker === 'facetracker' && predictions.length === 0)
+    ? warningMessage
+    : '';
 
   if (predictions.length > 0) {
     predictions.forEach((prediction) => {
@@ -167,23 +176,23 @@ async function renderPrediction() {
 
       const keypoints = prediction.scaledMesh;
 
-      for (let i = 0; i < keypoints.length; i++) {
+      for (let i = 0; i < keypoints.length; i += 1) {
         const x = keypoints[i][0];
         const y = keypoints[i][1];
 
         ctx.fillStyle = 'white';
         ctx.fillRect(x, y, 2, 2);
 
-        if (parseInt(controls.nPoint) == i) {
+        if (parseInt(controls.nPoint, 10) === i) {
           ctx.fillStyle = 'red';
           ctx.fillRect(x, y, 6, 6);
         }
 
-        if (i == 10 || i == 152) {
+        if (i === 10 || i === 152) {
           ctx.fillStyle = 'green';
           ctx.fillRect(x, y, 6, 6);
         }
-        if (i == 234 || i == 454) {
+        if (i === 234 || i === 454) {
           ctx.fillStyle = 'yellow';
           ctx.fillRect(x, y, 6, 6);
         }
@@ -197,9 +206,9 @@ async function renderPrediction() {
       const pTB = pTop.clone().addScaledVector(pBottom, -1).normalize();
       const pLR = pLeft.clone().addScaledVector(pRight, -1).normalize();
 
-      let yaw = radians_to_degrees(Math.PI / 2 - pLR.angleTo(new THREE.Vector3(0, 0, 1)));
-      let pitch = radians_to_degrees(Math.PI / 2 - pTB.angleTo(new THREE.Vector3(0, 0, 1)));
-      let roll = radians_to_degrees(Math.PI / 2 - pTB.angleTo(new THREE.Vector3(1, 0, 0)));
+      let yaw = radiansToDegrees(Math.PI / 2 - pLR.angleTo(new THREE.Vector3(0, 0, 1)));
+      let pitch = radiansToDegrees(Math.PI / 2 - pTB.angleTo(new THREE.Vector3(0, 0, 1)));
+      let roll = radiansToDegrees(Math.PI / 2 - pTB.angleTo(new THREE.Vector3(1, 0, 0)));
 
       if (yaw > parseFloat(controls.FOV)) {
         yaw = parseFloat(controls.FOV);
@@ -219,14 +228,17 @@ async function renderPrediction() {
       if (roll < -parseFloat(controls.FOV)) {
         roll = -parseFloat(controls.FOV);
       }
-      yawOptimized = yaw * parseFloat(controls.yawMultiplier);
-      pitchOptimized = pitch * parseFloat(controls.pitchMultiplier);
-      rollOptimized = roll * parseFloat(controls.rollMultiplier);
 
-      if (window.modeTracker == 'facetracker') {
-        window.yaw = yawOptimized;
-        window.pitch = pitchOptimized;
-        window.roll = rollOptimized;
+      // console.warn('yawOptimized', yawOptimized);
+      // FIXME: Not sure what is was, but looks like some id handler but can't to find it in proj
+      // yawOptimized = yaw * parseFloat(controls.yawMultiplier);
+      // pitchOptimized = pitch * parseFloat(controls.pitchMultiplier);
+      // rollOptimized = roll * parseFloat(controls.rollMultiplier);
+
+      if (window.modeTracker === 'facetracker') {
+        window.yaw = yaw * parseFloat(controls.yawMultiplier);
+        window.pitch = pitch * parseFloat(controls.pitchMultiplier);
+        window.roll = roll * parseFloat(controls.rollMultiplier);
       }
     });
   }
@@ -234,26 +246,23 @@ async function renderPrediction() {
   requestAnimationFrame(renderPrediction);
 }
 
-const progress = {
-  element: '<img class="svg-loader" src="/img/spinner.svg"><p>loading...</p><p id="progress"></p>',
-  change(current) {
-    const progress = document.getElementById('progress');
-    progress.innerHTML = `${current}%`;
-  }
-};
-
-const waitingSounds = () => new Promise((resolve, reject) => {
-  const timer = setInterval(() => {
-    progress.change(sound.getCountOfReadySound()); // update loading info
-    if (sound.isReady()) {
-      clearInterval(timer);
-      resolve();
-    }
-  }, 500);
-});
-
 async function trackerMain() {
   const info = document.getElementById('info');
+  const progress = {
+    element: '<img class="svg-loader" src="/img/spinner.svg"><p>loading...</p><p id="progress"></p>',
+    change(current) {
+      document.getElementById('progress').innerHTML = `${current}%`;
+    }
+  };
+  const waitingSounds = () => new Promise((resolve) => {
+    const timer = setInterval(() => {
+      progress.change(Player.getCountOfReadySound()); // update loading info
+      if (Player.isReady()) {
+        clearInterval(timer);
+        resolve();
+      }
+    }, 500);
+  });
 
   info.innerHTML = progress.element;
   document.getElementById('main').style.display = 'none';
@@ -282,9 +291,7 @@ async function trackerMain() {
   ctx.fillStyle = '#32EEDB';
   ctx.strokeStyle = '#32EEDB';
 
-  model = await facemesh.load({
-    maxFaces: 1
-  });
+  model = await facemesh.load({ maxFaces: 1 });
   await renderPrediction();
 
   // wait for loaded audio
@@ -292,49 +299,35 @@ async function trackerMain() {
   document.getElementById('main').style.display = '';
 }
 
-document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', () => {
   setupDatGui();
   trackerMain();
 });
-
-function DisplayDebug() {
-  const output = document.getElementById('modelview');
-  if (output.style.display === 'none') {
-    output.style.display = '';
-  } else {
-    output.style.display = 'none';
-  }
-  const video = document.getElementById('output');
-  if (video.style.display === 'none') {
-    video.style.display = '';
-  } else {
-    video.style.display = 'none';
-  }
-  const boseaStats = document.getElementById('bosearstats');
-  if (boseaStats.style.display === 'none') {
-    boseaStats.style.display = '';
-  } else {
-    boseaStats.style.display = 'none';
-  }
-}
 
 // ------------------------
 // Mach1 Spatial & Audio Handling
 
 let m1Decode = null;
-const m1DecodeModule = Mach1DecodeModule();
-// initialize Mach1 Spatial module with initial setup settings
-Mach1DecodeModule().then((m1DecodeModule) => {
+DecodeModule.then((m1DecodeModule) => {
   m1Decode = new m1DecodeModule.Mach1Decode();
+
   m1Decode.setPlatformType(m1Decode.Mach1PlatformType.Mach1PlatformDefault);
   m1Decode.setDecodeAlgoType(m1Decode.Mach1DecodeAlgoType.Mach1DecodeAlgoSpatial);
   m1Decode.setFilterSpeed(0.9);
 });
 
-const audioFiles8 = ['audio/m1spatial/T1.ogg', 'audio/m1spatial/T2.ogg', 'audio/m1spatial/T3.ogg', 'audio/m1spatial/T4.ogg', 'audio/m1spatial/B5.ogg', 'audio/m1spatial/B6.ogg', 'audio/m1spatial/B7.ogg', 'audio/m1spatial/B8.ogg'];
+const audioFiles8 = [
+  'audio/m1spatial/T1.ogg',
+  'audio/m1spatial/T2.ogg',
+  'audio/m1spatial/T3.ogg',
+  'audio/m1spatial/T4.ogg',
+  'audio/m1spatial/B5.ogg',
+  'audio/m1spatial/B6.ogg',
+  'audio/m1spatial/B7.ogg',
+  'audio/m1spatial/B8.ogg',
+];
 
-let sound = new Mach1SoundPlayer();
-sound.setup(audioFiles8);
+Player.setup(audioFiles8);
 
 function Decode(yaw, pitch, roll) {
   if (m1Decode != null && yaw != null && pitch != null && roll != null) {
@@ -343,55 +336,37 @@ function Decode(yaw, pitch, roll) {
     const decoded = m1Decode.decode(yaw, pitch, roll);
     m1Decode.endBuffer();
 
-    sound.updateGains(decoded);
-
-    let strDebug = '';
-    decoded.forEach((d) => {
-      strDebug += `${d.toFixed(2)} , `;
-    });
+    Player.updateGains(decoded);
   }
-}
-
-function Play() {
-  sound.play();
-}
-
-function Stop() {
-  sound.stop();
 }
 
 // ------------------------
 // OSC Handling
-const osc = new OSC();
 osc.open({
   port: 9898
 });
 
 // ------------------------
 // Visual rendering adopted from https://threejs.org/examples/webgl_materials_normalmap.html
-let container; let stats; let
-  loader;
-let camera; let scene; let
-  renderer;
-let mesh; let
-  pivot;
-let directionalLight; let pointLight; let
-  ambientLight;
+let container; let stats; let loader;
+let camera; let scene; let renderer;
+let mesh; let pivot;
+let directionalLight; let pointLight; let ambientLight;
 
 let mouseX = 0;
 let mouseY = 0;
 
-const targetX = 0;
-const targetY = 0;
+// const targetX = 0; // unused
+// const targetY = 0; // unused
 
 const width = 320; // window.innerWidth;
 const height = 240; // window.innerHeight;
 
-let windowHalfX;
-let windowHalfY;
+// let windowHalfX; // unused
+// let windowHalfY; // unused
 
-let composer; let
-  effectFXAA;
+let composer;
+// let effectFXAA; // unused
 
 let fYaw;
 let fPitch;
@@ -402,13 +377,43 @@ let pitch = 0;
 let roll = 0;
 
 window.createOneEuroFilters = function createOneEuroFilters() {
-  fYaw = OneEuroFilter(60, 1.0, window.controls.oneEuroFilterBeta, 1.0);
-  fPitch = OneEuroFilter(60, 1.0, window.controls.oneEuroFilterBeta, 1.0);
-  fRoll = OneEuroFilter(60, 1.0, window.controls.oneEuroFilterBeta, 1.0);
+  fYaw = OneEuroFilter(60, 1.0, controls.oneEuroFilterBeta, 1.0);
+  fPitch = OneEuroFilter(60, 1.0, controls.oneEuroFilterBeta, 1.0);
+  fRoll = OneEuroFilter(60, 1.0, controls.oneEuroFilterBeta, 1.0);
 };
 
+function onWindowResize() {
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(width, height);
+  composer.setSize(width, height);
+}
+
+function onDocumentMouseMove(event) {
+  const rect = event.target.getBoundingClientRect();
+  mouseX = (event.clientX - rect.left) / width;
+  mouseY = (event.clientY - rect.top) / height;
+}
+
 function init() {
-  mainWindow = document.getElementById('main');
+  const createScene = (geometry, scale, material) => {
+    mesh = new THREE.Mesh(geometry, material);
+
+    mesh.position.y = 120;
+
+    mesh.scale.x = scale;
+    mesh.scale.y = scale;
+    mesh.scale.z = scale;
+
+    pivot = new THREE.Group();
+    pivot.position.set(0.0, -150.0, 0);
+    pivot.add(mesh);
+
+    scene.add(pivot);
+  };
+
+  const mainWindow = document.getElementById('main');
   container = document.getElementById('modelview'); // document.createElement("div");
 
   camera = new THREE.PerspectiveCamera(27, width / height, 1, 10000);
@@ -462,36 +467,6 @@ function init() {
   onWindowResize();
 }
 
-function createScene(geometry, scale, material) {
-  mesh = new THREE.Mesh(geometry, material);
-
-  mesh.position.y = 120;
-  mesh.scale.x = mesh.scale.y = mesh.scale.z = scale;
-
-  pivot = new THREE.Group();
-  pivot.position.set(0.0, -150.0, 0);
-  pivot.add(mesh);
-
-  scene.add(pivot);
-}
-
-function onWindowResize() {
-  windowHalfX = width / 2;
-  windowHalfY = height / 2;
-
-  camera.aspect = width / height;
-  camera.updateProjectionMatrix();
-
-  renderer.setSize(width, height);
-  composer.setSize(width, height);
-}
-
-function onDocumentMouseMove(event) {
-  const rect = event.target.getBoundingClientRect();
-  mouseX = (event.clientX - rect.left) / width;
-  mouseY = (event.clientY - rect.top) / height;
-}
-
 function render() {
   if (mesh) {
     pivot.rotation.y = Math.PI - THREE.Math.degToRad(yaw);
@@ -526,20 +501,43 @@ function animate() {
   // Check and reconnect OSC
   // Apply orientation as output OSC messages
   if (osc.status() === OSC.STATUS.IS_OPEN) {
-    /*
-        Receive OSC message with address "/orientation" and three float arguements
-
-        Yaw (left -> right | where rotating left is negative)
-        Pitch (down -> up | where rotating down is negative)
-        Roll (top-pointing-left -> top-pointing-right | where rotating top of object left is negative)
-
-        */
+    /**
+     * Receive OSC message with address "/orientation" and three float arguements
+     * Yaw (left -> right | where rotating left is negative)
+     * Pitch (down -> up | where rotating down is negative)
+     *  Roll (top-pointing-left -> top-pointing-right | where rotating top of object left is negative)
+     *
+     * @type {Class}
+     */
     osc.send(new OSC.Message('/orientation', yaw, pitch, roll));
   } else if (osc.status() === OSC.STATUS.IS_CLOSED) {
     osc.open({
       // TODO: custom port output
       port: 9898
     });
+  }
+}
+
+// eslint-disable-next-line
+function DisplayDebug() {
+  const modelview = document.getElementById('modelview');
+  const videoOutput = document.getElementById('output');
+  const boseaStats = document.getElementById('bosearstats');
+
+  if (modelview.style.display === 'none') {
+    modelview.style.display = '';
+  } else {
+    modelview.style.display = 'none';
+  }
+  if (videoOutput.style.display === 'none') {
+    videoOutput.style.display = '';
+  } else {
+    videoOutput.style.display = 'none';
+  }
+  if (boseaStats.style.display === 'none') {
+    boseaStats.style.display = '';
+  } else {
+    boseaStats.style.display = 'none';
   }
 }
 

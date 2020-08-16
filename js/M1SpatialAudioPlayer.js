@@ -15,10 +15,13 @@ const controls = {
 
   nPoint: 468,
 };
+window.controls = controls;
 
 const Player = new Mach1SoundPlayer();
 const DecodeModule = new Mach1DecodeModule();
 const osc = new OSC();
+
+tf.setBackend('webgl');
 
 function radiansToDegrees(radians) {
   return radians * (180 / Math.PI);
@@ -269,11 +272,10 @@ async function trackerMain() {
 
   await Promise.all([
     waitingSounds(),
-    tf.setBackend('webgl'),
+    tf.ready(),
     setupCamera(),
   ]);
 
-  video.play();
   videoWidth = video.videoWidth;
   videoHeight = video.videoHeight;
   video.width = videoWidth;
@@ -297,6 +299,9 @@ async function trackerMain() {
   // wait for loaded audio
   info.innerHTML = '';
   document.getElementById('main').style.display = '';
+
+  // NOTE: iOS fix; should be start after build, load and resize events
+  video.play();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -330,7 +335,7 @@ const audioFiles8 = [
 Player.setup(audioFiles8);
 
 function Decode(yaw, pitch, roll) {
-  if (m1Decode != null && yaw != null && pitch != null && roll != null) {
+  if (m1Decode !== null && yaw !== null && pitch !== null && roll !== null) {
     m1Decode.setFilterSpeed(controls.filterSpeed);
     m1Decode.beginBuffer();
     const decoded = m1Decode.decode(yaw, pitch, roll);
@@ -545,4 +550,6 @@ document.addEventListener('DOMContentLoaded', () => {
   window.createOneEuroFilters();
   init();
   animate();
+
+  // document.getElementById('mobile:debug').innerHTML = 'event';
 });

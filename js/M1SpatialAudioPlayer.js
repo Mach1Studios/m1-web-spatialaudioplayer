@@ -1,8 +1,3 @@
-// import Mach1SoundPlayer from './Mach1SoundPlayer/Mach1SoundPlayer.js';
-// import * as Mach1DecodeModule from './Mach1Decode.js';
-
-// console.log(window);
-
 // ------------------------
 window.modeTracker = '';
 

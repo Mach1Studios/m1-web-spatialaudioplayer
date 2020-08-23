@@ -1,36 +1,45 @@
 {
-    "env": {
-        "browser": true,
-        "es2020": true
-    },
-    "globals": {
-      "dat": "readonly",
-      "facemesh": "readonly",
-      "Mach1DecodeModule": "readonly",
-      "Mach1SoundPlayer": "readonly",
-      "OneEuroFilter": "readonly",
-      "OSC": "readonly",
-      "Stats": "readonly",
-      "tf": "readonly",
-      "THREE": "readonly"
-    },
-    "extends": [
-        "airbnb-base"
-    ],
-    "parserOptions": {
-        "ecmaVersion": 11,
-        "sourceType": "module"
-    },
-    "rules": {
-        "no-console": "off",
-        "no-param-reassign": ["error", { "props": false }],
-        "max-len": ["error", { "code": 120 }],
-        "comma-dangle": ["error", {
-            "arrays": "ignore",
-            "objects": "ignore",
-            "imports": "ignore",
-            "exports": "ignore",
-            "functions": "ignore"
-        }]
-    }
+  "parser": "babel-eslint",
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2020": true
+  },
+  "globals": {
+    "dat": "readonly",
+    "facemesh": "readonly",
+    "Mach1DecodeModule": "readonly",
+    "Mach1SoundPlayer": "readonly",
+    "OneEuroFilter": "readonly",
+    "OSC": "readonly",
+    "Stats": "readonly",
+    "tf": "readonly",
+    "THREE": "readonly"
+  },
+  "extends": [
+    "airbnb-base"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module"
+  },
+  "rules": {
+    "no-console": "off",
+    "no-param-reassign": ["error", {
+      "props": false
+    }],
+    "lines-between-class-members": ["error", "always", {
+      "exceptAfterSingleLine": true
+    }],
+    "max-len": ["error", {
+      "code": 120
+    }],
+    "comma-dangle": ["error", {
+      "arrays": "ignore",
+      "objects": "ignore",
+      "imports": "ignore",
+      "exports": "ignore",
+      "functions": "ignore"
+    }]
+  }
 }

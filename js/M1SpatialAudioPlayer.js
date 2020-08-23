@@ -1,3 +1,8 @@
+// import Mach1SoundPlayer from './Mach1SoundPlayer/Mach1SoundPlayer.js';
+// import * as Mach1DecodeModule from './Mach1Decode.js';
+
+// console.log(window);
+
 // ------------------------
 window.modeTracker = '';
 
@@ -17,7 +22,32 @@ const controls = {
 };
 window.controls = controls;
 
-const Player = new Mach1SoundPlayer();
+const audioFiles8 = [
+  'audio/m1spatial/T1.ogg',
+  'audio/m1spatial/T2.ogg',
+  'audio/m1spatial/T3.ogg',
+  'audio/m1spatial/T4.ogg',
+  'audio/m1spatial/B5.ogg',
+  'audio/m1spatial/B6.ogg',
+  'audio/m1spatial/B7.ogg',
+  'audio/m1spatial/B8.ogg',
+];
+
+// try {
+//   class ClassName {
+//     #inner = 'inner'
+//     constructor() {
+//       throw new Error(this.#inner)
+//     }
+//   }
+//   const test = new ClassName()
+// } catch (e) {
+//   throw new Error(e)
+// }
+
+// throw new Error(typeof Mach1SoundPlayer);
+const Player = new Mach1SoundPlayer(audioFiles8);
+
 const DecodeModule = new Mach1DecodeModule();
 const osc = new OSC();
 
@@ -97,6 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ------------------------
 function handleDeviceOrientation(event) {
+  throw new Error('handleDeviceOrientation');
   const x = event.beta;
   const y = event.alpha;
   const z = event.gamma;
@@ -108,7 +139,13 @@ function handleDeviceOrientation(event) {
   }
 }
 
-window.addEventListener('deviceorientation', handleDeviceOrientation);
+if (window.DeviceOrientationEvent && 'ontouchstart' in window) {
+  console.log(window.DeviceOrientationEvent);
+  window.addEventListener('deviceorientation', handleDeviceOrientation, true);
+  // throw new Error('orientation support');
+} else {
+  // throw new Error('orientation not support');
+}
 
 function setupDatGui() {
   const gui = new dat.GUI();
@@ -259,7 +296,7 @@ async function trackerMain() {
   };
   const waitingSounds = () => new Promise((resolve) => {
     const timer = setInterval(() => {
-      progress.change(Player.getCountOfReadySound()); // update loading info
+      progress.change(Player.progress); // update loading info
       if (Player.isReady()) {
         clearInterval(timer);
         resolve();
@@ -321,18 +358,7 @@ DecodeModule.then((m1DecodeModule) => {
   m1Decode.setFilterSpeed(0.9);
 });
 
-const audioFiles8 = [
-  'audio/m1spatial/T1.ogg',
-  'audio/m1spatial/T2.ogg',
-  'audio/m1spatial/T3.ogg',
-  'audio/m1spatial/T4.ogg',
-  'audio/m1spatial/B5.ogg',
-  'audio/m1spatial/B6.ogg',
-  'audio/m1spatial/B7.ogg',
-  'audio/m1spatial/B8.ogg',
-];
-
-Player.setup(audioFiles8);
+// Player.setup(audioFiles8);
 
 function Decode(yaw, pitch, roll) {
   if (m1Decode !== null && yaw !== null && pitch !== null && roll !== null) {
@@ -341,7 +367,7 @@ function Decode(yaw, pitch, roll) {
     const decoded = m1Decode.decode(yaw, pitch, roll);
     m1Decode.endBuffer();
 
-    Player.updateGains(decoded);
+    Player.gains = decoded;
   }
 }
 
@@ -498,6 +524,10 @@ function animate() {
   render();
   stats.update();
 
+  // Setting up all values into rotation panel
+  document.getElementById('rotationPitch').value = pitch;
+  document.getElementById('rotationYaw').value = yaw;
+  document.getElementById('rotationRoll').value = roll;
   // Apply orientation to decode Mach1 Spatial to Stereo
   Decode(yaw, pitch, roll);
   // Apply orientation (yaw) to compass UI

@@ -97,6 +97,16 @@ boseARDeviceElement.addEventListener('rotation', (event) => {
   }
 });
 
+const getModeElement = (name) => {
+  const element = document.getElementsByName('mode');
+  for (let i = 0; i < element.length; i += 1) {
+    if (element[i].value === name) {
+      return element[i];
+    }
+  }
+  return null;
+};
+
 function selectTracker() {
   // NOTE: Clear all warning messages
   document.getElementById('warning').innerHTML = '';
@@ -105,6 +115,40 @@ function selectTracker() {
   for (let i = 0; i < ele.length; i += 1) {
     if (ele[i].checked) {
       window.modeTracker = ele[i].value;
+    }
+  }
+
+  if (window.modeTracker === 'device') {
+    const handleDeviceOrientation = (event) => {
+      const x = event.beta;
+      const y = event.alpha;
+      const z = event.gamma;
+
+      if (window.modeTracker === 'device') {
+        window.yaw = x;
+        window.pitch = y;
+        window.roll = z;
+      }
+    };
+    try {
+      if (typeof DeviceMotionEvent.requestPermission === 'function') {
+        DeviceMotionEvent.requestPermission().then((response) => {
+          if (response === 'granted') {
+            window.addEventListener('deviceorientation', handleDeviceOrientation, true);
+          }
+        });
+        window.addEventListener('deviceorientation', handleDeviceOrientation, true);
+      } else {
+        window.addEventListener('deviceorientation', handleDeviceOrientation, true);
+      }
+    } catch (e) {
+      getModeElement('device').disabled = true;
+      getModeElement('touch').checked = true;
+
+      const warningMessage = 'WARNING: UNABLE TO TRACK DEVICE ORIENTATION!';
+      document.getElementById('warning').innerHTML = (window.modeTracker === 'device')
+        ? warningMessage
+        : '';
     }
   }
 }
@@ -118,28 +162,6 @@ document.addEventListener('DOMContentLoaded', () => {
   selectTracker();
   enableBoseAR();
 });
-
-// ------------------------
-function handleDeviceOrientation(event) {
-  throw new Error('handleDeviceOrientation');
-  const x = event.beta;
-  const y = event.alpha;
-  const z = event.gamma;
-
-  if (window.modeTracker === 'device') {
-    window.yaw = x;
-    window.pitch = y;
-    window.roll = z;
-  }
-}
-
-if (window.DeviceOrientationEvent && 'ontouchstart' in window) {
-  console.log(window.DeviceOrientationEvent);
-  window.addEventListener('deviceorientation', handleDeviceOrientation, true);
-  // throw new Error('orientation support');
-} else {
-  // throw new Error('orientation not support');
-}
 
 function setupDatGui() {
   const gui = new dat.GUI();
@@ -179,8 +201,6 @@ async function setupCamera() {
     },
   });
   video.srcObject = stream;
-
-  // return Promise.resolve();
 
   return new Promise((resolve) => {
     video.onloadedmetadata = () => {
@@ -579,8 +599,6 @@ document.addEventListener('DOMContentLoaded', () => {
   window.createOneEuroFilters();
   init();
   animate();
-
-  // document.getElementById('mobile:debug').innerHTML = 'event';
 });
 
 window.onerror = (event) => {

@@ -22,32 +22,26 @@ const controls = {
 };
 window.controls = controls;
 
-const audioFiles8 = [
-  'audio/m1spatial/T1.ogg',
-  'audio/m1spatial/T2.ogg',
-  'audio/m1spatial/T3.ogg',
-  'audio/m1spatial/T4.ogg',
-  'audio/m1spatial/B5.ogg',
-  'audio/m1spatial/B6.ogg',
-  'audio/m1spatial/B7.ogg',
-  'audio/m1spatial/B8.ogg',
-];
+// const audioFiles8 = [
+//   'audio/m1spatial/T1.ogg',
+//   'audio/m1spatial/T2.ogg',
+//   'audio/m1spatial/T3.ogg',
+//   'audio/m1spatial/T4.ogg',
+//   'audio/m1spatial/B5.ogg',
+//   'audio/m1spatial/B6.ogg',
+//   'audio/m1spatial/B7.ogg',
+//   'audio/m1spatial/B8.ogg',
+// ];
 
-// try {
-//   class ClassName {
-//     #inner = 'inner'
-//     constructor() {
-//       throw new Error(this.#inner)
-//     }
-//   }
-//   const test = new ClassName()
-// } catch (e) {
-//   throw new Error(e)
-// }
+const audioFiles8 = ['T1', 'T2', 'T3', 'T4', 'B5', 'B6', 'B7', 'B8'];
+const getAudioFiles = (files) => {
+  const path = 'audio/m1spatial';
+  const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'mp3' : 'ogg';
 
-// throw new Error(typeof Mach1SoundPlayer);
-const Player = new Mach1SoundPlayer(audioFiles8);
+  return files.map((file) => `${path}/${file}.${extention}`);
+};
 
+const Player = new Mach1SoundPlayer(getAudioFiles(audioFiles8));
 const DecodeModule = new Mach1DecodeModule();
 const osc = new OSC();
 

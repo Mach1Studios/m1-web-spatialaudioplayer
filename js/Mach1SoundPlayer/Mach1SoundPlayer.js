@@ -52,7 +52,7 @@ class Mach1SoundPlayer {
         this.#audioContext.decodeAudioData(blob, (data) => {
           this.#cache[uri] = data;
           resolve(data);
-        });
+        }, () => alert('AudioContext issue'));
       }
     });
     const options = {
@@ -232,5 +232,3 @@ class Mach1SoundPlayer {
     return this.#isPlaying;
   }
 }
-
-window.Mach1SoundPlayer = Mach1SoundPlayer;

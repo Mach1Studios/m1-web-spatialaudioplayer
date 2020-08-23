@@ -1,4 +1,4 @@
-/* eslint-disable new-cap */
+/* eslint-disable new-cap, no-alert */
 
 class Mach1SoundPlayer {
   #soundFilesCount = 0
@@ -52,7 +52,7 @@ class Mach1SoundPlayer {
         this.#audioContext.decodeAudioData(blob, (data) => {
           this.#cache[uri] = data;
           resolve(data);
-        }, () => alert('AudioContext issue'));
+        }, () => console.error('AudioContext issue'));
       }
     });
     const options = {
@@ -61,17 +61,27 @@ class Mach1SoundPlayer {
       responseType: 'arrayBuffer',
     };
 
-    const response = await fetch(uri, options);
-    const blob = await response.arrayBuffer();
-    const buffer = await getDecodedAudioData(blob);
+    try {
+      const response = await fetch(uri, options);
+      if (!response.ok) throw new Error(response.statusText);
 
-    this.#buffer[number] = buffer;
+      const blob = await response.arrayBuffer();
+      const buffer = await getDecodedAudioData(blob);
 
-    console.log(`Mach1Sound {path: ${uri}, i: ${number * 2}, ${number * 2 + 1}} loaded`);
-    console.timeEnd(`load file ${uri}`);
+      this.#buffer[number] = buffer;
 
-    this.#soundFilesCountReady += 2;
-    this.#isSoundReady = (this.#soundFilesCountReady === this.#soundFilesCount);
+      console.log(`Mach1Sound {path: ${uri}, i: ${number * 2}, ${number * 2 + 1}} loaded`);
+      console.timeEnd(`load file ${uri}`);
+
+      this.#soundFilesCountReady += 2;
+      this.#isSoundReady = (this.#soundFilesCountReady === this.#soundFilesCount);
+    } catch (e) {
+      this.#isSoundReady = false;
+      console.timeEnd(`doesn't load file ${uri}`);
+
+      throw new Error(`Can't load sound files; Completed ${this.#soundFilesCountReady}/${this.#soundFilesCount}`);
+      // NOTE: If need here can add some logs case or any requirement action
+    }
   }
 
   constructor(input) {

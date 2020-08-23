@@ -282,8 +282,13 @@ async function renderPrediction() {
 
 async function trackerMain() {
   const info = document.getElementById('info');
+  const element = `
+    <img class="svg-loader" src="/img/spinner.svg">
+    <p id="progress:debug">loading...</p>
+    <p id="progress"></p>
+  `;
   const progress = {
-    element: '<img class="svg-loader" src="/img/spinner.svg"><p>loading...</p><p id="progress"></p>',
+    element,
     change(current) {
       document.getElementById('progress').innerHTML = `${current}%`;
     }
@@ -576,4 +581,11 @@ document.addEventListener('DOMContentLoaded', () => {
   animate();
 
   // document.getElementById('mobile:debug').innerHTML = 'event';
+});
+
+window.onerror = (event) => {
+  document.getElementById('progress:debug').innerHTML = `<p>Error: ${event}</p>`;
+};
+window.addEventListener('unhandledrejection', (event) => {
+  document.getElementById('progress:debug').innerHTML = `<p>Error: ${event.reason}</p>`;
 });

@@ -15,3 +15,12 @@ powershell -Command "Invoke-WebRequest -OutFile B1.ogg http://dev.mach1.xyz/mach
 powershell -Command "Invoke-WebRequest -OutFile B2.ogg http://dev.mach1.xyz/mach1-sdk-sample-audio/web/m1spatial/B6.ogg"
 powershell -Command "Invoke-WebRequest -OutFile B3.ogg http://dev.mach1.xyz/mach1-sdk-sample-audio/web/m1spatial/B7.ogg"
 powershell -Command "Invoke-WebRequest -OutFile B4.ogg http://dev.mach1.xyz/mach1-sdk-sample-audio/web/m1spatial/B8.ogg"
+
+powershell -Command "Invoke-WebRequest -OutFile T1.ogg http://dev.mach1.xyz/mach1-sdk-sample-audio/web/m1spatial/T1.mp3"
+powershell -Command "Invoke-WebRequest -OutFile T2.ogg http://dev.mach1.xyz/mach1-sdk-sample-audio/web/m1spatial/T2.mp3"
+powershell -Command "Invoke-WebRequest -OutFile T3.ogg http://dev.mach1.xyz/mach1-sdk-sample-audio/web/m1spatial/T3.mp3"
+powershell -Command "Invoke-WebRequest -OutFile T4.ogg http://dev.mach1.xyz/mach1-sdk-sample-audio/web/m1spatial/T4.mp3"
+powershell -Command "Invoke-WebRequest -OutFile B1.ogg http://dev.mach1.xyz/mach1-sdk-sample-audio/web/m1spatial/B5.mp3"
+powershell -Command "Invoke-WebRequest -OutFile B2.ogg http://dev.mach1.xyz/mach1-sdk-sample-audio/web/m1spatial/B6.mp3"
+powershell -Command "Invoke-WebRequest -OutFile B3.ogg http://dev.mach1.xyz/mach1-sdk-sample-audio/web/m1spatial/B7.mp3"
+powershell -Command "Invoke-WebRequest -OutFile B4.ogg http://dev.mach1.xyz/mach1-sdk-sample-audio/web/m1spatial/B8.mp3"

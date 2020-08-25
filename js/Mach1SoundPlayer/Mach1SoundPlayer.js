@@ -21,6 +21,11 @@ class Mach1SoundPlayer {
 
   #startTime = 0;
   #stopTime = 0;
+  /**
+   * Private method which should calculate and return time before start playing,
+   * based on Audio Context
+   * @type {Number}
+   */
   #currentTime = () => {
     if (!this.isReady() || !this.#isPlaying) {
       return this.#stopTime - this.#startTime > 0 ? this.#stopTime - this.#startTime : 0;
@@ -31,9 +36,15 @@ class Mach1SoundPlayer {
   #needToPlay = false;
   #playLooped = false;
   #waitToPlay = 0;
-
+  /**
+   * Create new array with fixed item count, each item have zero value
+   * @type {Array}
+   */
   #initArray = (count = this.#soundFilesCount) => new Array(count).fill(0.0)
-
+  /**
+   * Set default time value for a gain nodes (for all buffered sound files)
+   * @type {}
+   */
   #setGains = () => {
     if (this.isReady() && this.#isPlaying) {
       for (let i = 0; i < this.#smp.length; i += 1) {
@@ -42,6 +53,10 @@ class Mach1SoundPlayer {
     }
   }
 
+  /**
+   * Downloads, caches, and sets default properties for the received file
+   * @type {}
+   */
   #preload = async (uri, number) => {
     console.time(`load file ${uri}`);
 
@@ -84,6 +99,9 @@ class Mach1SoundPlayer {
     }
   }
 
+  /**
+   * @param {Array|AudioBuffer} input array with sound files paths [url]
+   */
   constructor(input) {
     if (Object.getPrototypeOf(input) === AudioBuffer.prototype) {
       this.#isFromBuffer = true;
@@ -118,12 +136,21 @@ class Mach1SoundPlayer {
     }
   }
 
+  /**
+   * Return progress information in percent
+   * @return {String} Percentages from 0 to 100 as a string [integer]
+   */
   get progress() {
     return ((this.#soundFilesCountReady / this.#soundFilesCount) * 100).toFixed(0);
   }
 
+  /**
+   * Setting gains for all files
+   * @param  {Array} vols binding new gain values by index
+   */
   set gains(vols) {
     if (Array.isArray(vols)) {
+      // FIXME: Need to refactor this part [switch to default array method like a forEach]
       for (let i = 0; i < this.#soundFilesCount; i += 1) {
         this.#gains[i] = vols[i];
       }
@@ -134,6 +161,9 @@ class Mach1SoundPlayer {
     }
   }
 
+  /**
+   * Start playing sound files
+   */
   play(looped, time = this.#currentTime()) {
     if (this.isReady() && !this.#isPlaying && !this.#isDeleted) {
       if (this.isReady() && !this.#isPlaying) {
@@ -205,6 +235,9 @@ class Mach1SoundPlayer {
     }
   }
 
+  /**
+   * Stopping play any sound file
+   */
   stop() {
     if (this.isReady() && this.#isPlaying && !this.#isDeleted) {
       this.#isPlaying = false;
@@ -212,6 +245,7 @@ class Mach1SoundPlayer {
 
       this.#stopTime = this.#audioContext.currentTime;
 
+      // FIXME: Need to change this part
       for (let i = 0; i < this.#smp.length; i += 1) {
         this.#smp[i].stop();
 
@@ -220,6 +254,9 @@ class Mach1SoundPlayer {
     }
   }
 
+  /**
+   * Alias for the this.stop() method
+   */
   pause() {
     this.stop();
   }

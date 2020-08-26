@@ -120,8 +120,8 @@ function selectTracker() {
       const z = event.gamma;
 
       if (window.modeTracker === 'device') {
-        window.yaw = x;
-        window.pitch = y;
+        window.yaw = y;
+        window.pitch = x;
         window.roll = z;
       }
     };

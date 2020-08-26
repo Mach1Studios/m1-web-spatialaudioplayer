@@ -217,8 +217,10 @@ async function renderPrediction() {
   if (predictions.length > 0) {
     predictions.forEach((prediction) => {
       try {
-        document.getElementById('warning').innerHTML = (prediction.faceInViewConfidence < 1) ? warningMessage : '';
-        document.getElementById('stats').innerHTML += `confidence: ${prediction.faceInViewConfidence.toFixed(4)}`;
+        if (window.modeTracker === 'facetracker') {
+          document.getElementById('warning').innerHTML = (prediction.faceInViewConfidence < 1) ? warningMessage : '';
+          document.getElementById('stats').innerHTML += `confidence: ${prediction.faceInViewConfidence.toFixed(4)}`;
+        }
       } catch (err) {
         document.getElementById('stats').innerHTML = err.message;
       }
@@ -278,7 +280,6 @@ async function renderPrediction() {
         roll = -parseFloat(controls.FOV);
       }
 
-      // console.warn('yawOptimized', yawOptimized);
       // FIXME: Not sure what is was, but looks like some id handler but can't to find it in proj
       // yawOptimized = yaw * parseFloat(controls.yawMultiplier);
       // pitchOptimized = pitch * parseFloat(controls.pitchMultiplier);

@@ -102,6 +102,8 @@ const getModeElement = (name) => {
   return null;
 };
 
+var gimbal = new Gimbal();
+
 function selectTracker() {
   // NOTE: Clear all warning messages
   document.getElementById('warning').innerHTML = '';
@@ -115,14 +117,11 @@ function selectTracker() {
 
   if (window.modeTracker === 'device') {
     const handleDeviceOrientation = (event) => {
-      const x = event.beta;
-      const y = event.alpha;
-      const z = event.gamma;
-
+	  gimbal.update();
       if (window.modeTracker === 'device') {
-        window.yaw = x;
-        window.pitch = y;
-        window.roll = z;
+        window.yaw =  gimbal.yaw * 180 / Math.PI;
+        window.pitch = gimbal.pitch * 180 / Math.PI;
+        window.roll = gimbal.roll * 180 / Math.PI;
       }
     };
     try {
@@ -145,6 +144,8 @@ function selectTracker() {
         ? warningMessage
         : '';
     }
+	
+	gimbal.enable();
   }
 }
 
@@ -532,9 +533,16 @@ function animate() {
     window.roll = 0;
   }
 
-  if (window.yaw != null) yaw = fYaw.filter(window.yaw);
-  if (window.pitch != null) pitch = fPitch.filter(window.pitch);
-  if (window.roll != null) roll = fRoll.filter(window.roll);
+  if (window.modeTracker === 'device') {
+    if (window.yaw != null) yaw = window.yaw;
+    if (window.pitch != null) pitch = window.pitch;
+    if (window.roll != null) roll = window.roll;
+  }
+  else {
+    if (window.yaw != null) yaw = fYaw.filter(window.yaw);
+    if (window.pitch != null) pitch = fPitch.filter(window.pitch);
+    if (window.roll != null) roll = fRoll.filter(window.roll);
+  }
 
   render();
   stats.update();

@@ -535,7 +535,7 @@ function animate() {
 
   if (window.modeTracker === 'device') {
     if (window.yaw != null) yaw = window.yaw;
-    if (window.pitch != null) pitch = window.pitch;
+    if (window.pitch != null) pitch = -window.pitch;
     if (window.roll != null) roll = window.roll;
   }
   else {

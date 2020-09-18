@@ -38,7 +38,7 @@ window.createOneEuroFilters = function createOneEuroFilters() {
 ```
 
 ### Mobile Device IMU
-**Coming soon...**
+Running this demo on a mobile device will now use the device's IMU sensor with gimbal rotations to ensure holding in portrait mode will have a smooth and expected full 3DOF rotations.
 
 ### Mouse UI
 When utilizing `Touch` mode a simple mouse control bound to width of window will be used as the input orientation for the `Mach1Decode` object(s) and for the OSC output.

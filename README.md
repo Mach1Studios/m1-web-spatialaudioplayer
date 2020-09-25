@@ -43,6 +43,8 @@ Running this demo on a mobile device will now use the device's IMU sensor with g
 ### Mouse UI
 When utilizing `Touch` mode a simple mouse control bound to width of window will be used as the input orientation for the `Mach1Decode` object(s) and for the OSC output.
 
-
 ### Bose AR IMU
 When utilizing `Bose AR` mode a connection prompt and handler supplied by the [BoseAR Web SDK](https://github.com/zakaton/Bose-Frames-Web-SDK) will be utilized for the input orientation for the `Mach1Decode` object(s) and for the OSC output.
+
+## License
+Use of the Mach1Decode API in this example falls under the license supplied in this repo and derived from the [Mach1 Spatial SDK](https://github.com/Mach1Studios/m1-sdk) viewable [here](https://github.com/Mach1Studios/m1-sdk/tree/master/license)

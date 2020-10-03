@@ -374,8 +374,6 @@ DecodeModule.then((m1DecodeModule) => {
   m1Decode.setFilterSpeed(0.9);
 });
 
-// Player.setup(audioFiles8);
-
 function Decode(yaw, pitch, roll) {
   if (m1Decode !== null && yaw !== null && pitch !== null && roll !== null) {
     m1Decode.setFilterSpeed(controls.filterSpeed);

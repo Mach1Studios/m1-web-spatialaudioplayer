@@ -1,5 +1,8 @@
 // ------------------------
 window.modeTracker = '';
+const videoOutput = document.getElementById('output');
+const boseaStats = document.getElementById('bosearstats');
+
 
 /**
  * Default contrlols configuration
@@ -404,17 +407,10 @@ let directionalLight; let pointLight; let ambientLight;
 let mouseX = 0;
 let mouseY = 0;
 
-// const targetX = 0; // unused
-// const targetY = 0; // unused
-
 const width = 320; // window.innerWidth;
 const height = 240; // window.innerHeight;
 
-// let windowHalfX; // unused
-// let windowHalfY; // unused
-
 let composer;
-// let effectFXAA; // unused
 
 let fYaw;
 let fPitch;
@@ -440,8 +436,8 @@ function onWindowResize() {
 
 function onDocumentMouseMove(event) {
   const rect = event.target.getBoundingClientRect();
-  mouseX = (event.clientX - rect.left) / width;
-  mouseY = (event.clientY - rect.top) / height;
+  mouseX = (event.clientX) / window.innerWidth;
+  mouseY = (event.clientY) / window.innerHeight;
 }
 
 function init() {
@@ -527,22 +523,54 @@ function render() {
 function animate() {
   const map = (value, x1, y1, x2, y2) => ((value - x1) * (y2 - x2)) / (y1 - x1) + x2;
   requestAnimationFrame(animate);
-
+  // Update mode dependent UI here
   if (window.modeTracker === 'touch') {
-    window.yaw = map(mouseX, 0, 1, -90, 90);
-    window.pitch = map(mouseY, 0, 1, 70, -70);
+    window.yaw = map(mouseX, 0, 1, -180, 180);
+    window.pitch = map(mouseY, 0, 1, 45, -45);
     window.roll = 0;
+    if (videoOutput.style.display === '') {
+      videoOutput.style.display = 'none';
+    }
+    if (bosearstats.style.display === '') {
+      bosearstats.style.display = 'none';
+    }
   }
-
   if (window.modeTracker === 'device') {
     if (window.yaw != null) yaw = window.yaw;
     if (window.pitch != null) pitch = -window.pitch;
     if (window.roll != null) roll = window.roll;
-  }
-  else {
+    if (videoOutput.style.display === '') {
+      videoOutput.style.display = 'none';
+    }
+    if (bosearstats.style.display === '') {
+      bosearstats.style.display = 'none';
+    }
+  } else {
+    if (videoOutput.style.display === '') {
+      videoOutput.style.display = 'none';
+    }
+    if (bosearstats.style.display === '') {
+      bosearstats.style.display = 'none';
+    }
     if (window.yaw != null) yaw = fYaw.filter(window.yaw);
     if (window.pitch != null) pitch = fPitch.filter(window.pitch);
     if (window.roll != null) roll = fRoll.filter(window.roll);
+  }
+  if (window.modeTracker === 'facetracker') {
+    if (videoOutput.style.display === 'none') {
+      videoOutput.style.display = '';
+    }
+    if (bosearstats.style.display === '') {
+      bosearstats.style.display = 'none';
+    }
+  }
+  if (window.modeTracker === 'bosear') {
+    if (videoOutput.style.display === '') {
+      videoOutput.style.display = 'none';
+    }
+    if (bosearstats.style.display === 'none') {
+      bosearstats.style.display = '';
+    }
   }
 
   render();
@@ -577,26 +605,13 @@ function animate() {
   }
 }
 
-// eslint-disable-next-line
 function DisplayDebug() {
+  // Add debug UI here
   const modelview = document.getElementById('modelview');
-  const videoOutput = document.getElementById('output');
-  const boseaStats = document.getElementById('bosearstats');
-
   if (modelview.style.display === 'none') {
     modelview.style.display = '';
   } else {
     modelview.style.display = 'none';
-  }
-  if (videoOutput.style.display === 'none') {
-    videoOutput.style.display = '';
-  } else {
-    videoOutput.style.display = 'none';
-  }
-  if (boseaStats.style.display === 'none') {
-    boseaStats.style.display = '';
-  } else {
-    boseaStats.style.display = 'none';
   }
 }
 

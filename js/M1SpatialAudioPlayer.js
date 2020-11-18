@@ -52,9 +52,6 @@ function radiansToDegrees(radians) {
   return radians * (180 / Math.PI);
 }
 
-// Update the POV Debug UI for Touch mode
-obj_hover_rotate("body", ".cardBottom", ".card");
-
 const boseARDeviceElement = document.querySelector('bose-ar-device');
 const boseAROrder = 'YXZ';
 const boseARConfig = {
@@ -541,6 +538,7 @@ function animate() {
     if (touchStats.style.display === 'none') {
       touchStats.style.display = '';
     }
+    $(".card").css({'transform' : 'translate(-50%, -50%) rotateY('+parseInt(-window.yaw)+'deg) rotateX('+parseInt(-window.pitch)+'deg)'});
   }
   if (window.modeTracker === 'device') {
     document.getElementById('compass').style.display = '';
@@ -622,16 +620,6 @@ function animate() {
       port: 9898
     });
   }
-}
-
-function obj_hover_rotate($hover_obj, $wrap_obj, $move_obj){
-  $($hover_obj).mousemove(function(ev){
-    var oEvent = ev || event;
- 
-    nPitch = -pitch;
-    nYaw = yaw;
-    $($move_obj).css({'transform' : 'translate(-50%, -50%) rotateY(-'+nYaw+'deg) rotateX('+nPitch+'deg)'});
-  });
 }
 
 function DisplayDebug() {

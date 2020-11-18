@@ -1,8 +1,8 @@
 // ------------------------
 window.modeTracker = '';
 const videoOutput = document.getElementById('output');
-const boseaStats = document.getElementById('bosearstats');
-
+const bosearStats = document.getElementById('bosearstats');
+const touchStats = document.getElementById('touchstats');
 
 /**
  * Default contrlols configuration
@@ -51,6 +51,9 @@ tf.setBackend('webgl');
 function radiansToDegrees(radians) {
   return radians * (180 / Math.PI);
 }
+
+// Update the POV Debug UI for Touch mode
+obj_hover_rotate("body", ".cardBottom", ".card");
 
 const boseARDeviceElement = document.querySelector('bose-ar-device');
 const boseAROrder = 'YXZ';
@@ -528,48 +531,64 @@ function animate() {
     window.yaw = map(mouseX, 0, 1, -180, 180);
     window.pitch = map(mouseY, 0, 1, 45, -45);
     window.roll = 0;
+    document.getElementById('compass').style.display = 'none';
     if (videoOutput.style.display === '') {
       videoOutput.style.display = 'none';
     }
-    if (bosearstats.style.display === '') {
-      bosearstats.style.display = 'none';
+    if (bosearStats.style.display === '') {
+      bosearStats.style.display = 'none';
+    }
+    if (touchStats.style.display === 'none') {
+      touchStats.style.display = '';
     }
   }
   if (window.modeTracker === 'device') {
+    document.getElementById('compass').style.display = '';
     if (window.yaw != null) yaw = window.yaw;
     if (window.pitch != null) pitch = -window.pitch;
     if (window.roll != null) roll = window.roll;
     if (videoOutput.style.display === '') {
       videoOutput.style.display = 'none';
     }
-    if (bosearstats.style.display === '') {
-      bosearstats.style.display = 'none';
+    if (bosearStats.style.display === '') {
+      bosearStats.style.display = 'none';
+    }
+    if (touchStats.style.display === '') {
+      touchStats.style.display = 'none';
     }
   } else {
     if (videoOutput.style.display === '') {
       videoOutput.style.display = 'none';
     }
-    if (bosearstats.style.display === '') {
-      bosearstats.style.display = 'none';
+    if (bosearStats.style.display === '') {
+      bosearStats.style.display = 'none';
     }
     if (window.yaw != null) yaw = fYaw.filter(window.yaw);
     if (window.pitch != null) pitch = fPitch.filter(window.pitch);
     if (window.roll != null) roll = fRoll.filter(window.roll);
   }
   if (window.modeTracker === 'facetracker') {
+    document.getElementById('compass').style.display = '';
     if (videoOutput.style.display === 'none') {
       videoOutput.style.display = '';
     }
-    if (bosearstats.style.display === '') {
-      bosearstats.style.display = 'none';
+    if (bosearStats.style.display === '') {
+      bosearStats.style.display = 'none';
+    }
+    if (touchStats.style.display === '') {
+      touchStats.style.display = 'none';
     }
   }
   if (window.modeTracker === 'bosear') {
+    document.getElementById('compass').style.display = '';
     if (videoOutput.style.display === '') {
       videoOutput.style.display = 'none';
     }
-    if (bosearstats.style.display === 'none') {
-      bosearstats.style.display = '';
+    if (bosearStats.style.display === 'none') {
+      bosearStats.style.display = '';
+    }
+    if (touchStats.style.display === '') {
+      touchStats.style.display = 'none';
     }
   }
 
@@ -592,7 +611,7 @@ function animate() {
      * Receive OSC message with address "/orientation" and three float arguements
      * Yaw (left -> right | where rotating left is negative)
      * Pitch (down -> up | where rotating down is negative)
-     *  Roll (top-pointing-left -> top-pointing-right | where rotating top of object left is negative)
+     * Roll (top-pointing-left -> top-pointing-right | where rotating top of object left is negative)
      *
      * @type {Class}
      */
@@ -603,6 +622,16 @@ function animate() {
       port: 9898
     });
   }
+}
+
+function obj_hover_rotate($hover_obj, $wrap_obj, $move_obj){
+  $($hover_obj).mousemove(function(ev){
+    var oEvent = ev || event;
+ 
+    nPitch = -pitch;
+    nYaw = yaw;
+    $($move_obj).css({'transform' : 'translate(-50%, -50%) rotateY(-'+nYaw+'deg) rotateX('+nPitch+'deg)'});
+  });
 }
 
 function DisplayDebug() {

@@ -34,7 +34,7 @@ window.controls = controls;
 const audioFiles8 = ['T1', 'T2', 'T3', 'T4', 'B5', 'B6', 'B7', 'B8'];
 const getAudioFiles = (files) => {
   const path = 'audio/m1spatial';
-  
+
   // NOTE: The new iPad now mimic to Mac OMG
   const isModernIPad = (/MacIntel/.test(navigator.platform) && 'ontouchend' in document);
   const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) || isModernIPad ? 'mp3' : 'ogg';
@@ -108,7 +108,7 @@ const getModeElement = (name) => {
   return null;
 };
 
-var gimbal = new Gimbal();
+const gimbal = new Gimbal();
 
 function selectTracker() {
   // NOTE: Clear all warning messages
@@ -122,12 +122,12 @@ function selectTracker() {
   }
 
   if (window.modeTracker === 'device') {
-    const handleDeviceOrientation = (event) => {
-	  gimbal.update();
+    const handleDeviceOrientation = () => {
+      gimbal.update();
       if (window.modeTracker === 'device') {
-        window.yaw =  gimbal.yaw * 180 / Math.PI;
-        window.pitch = gimbal.pitch * 180 / Math.PI;
-        window.roll = gimbal.roll * 180 / Math.PI;
+        window.yaw = (gimbal.yaw * 180) / Math.PI;
+        window.pitch = (gimbal.pitch * 180) / Math.PI;
+        window.roll = (gimbal.roll * 180) / Math.PI;
       }
     };
     try {
@@ -151,7 +151,7 @@ function selectTracker() {
         : '';
     }
 
-	gimbal.enable();
+    gimbal.enable();
   }
 }
 
@@ -435,7 +435,7 @@ function onWindowResize() {
 }
 
 function onDocumentMouseMove(event) {
-  const rect = event.target.getBoundingClientRect();
+  // const rect = event.target.getBoundingClientRect();
   mouseX = (event.clientX) / window.innerWidth;
   mouseY = (event.clientY) / window.innerHeight;
 }
@@ -538,7 +538,11 @@ function animate() {
     if (touchStats.style.display === 'none') {
       touchStats.style.display = '';
     }
-    $(".card").css({'transform' : 'translate(-50%, -50%) rotateY('+parseInt(-window.yaw)+'deg) rotateX('+parseInt(-window.pitch)+'deg)'});
+
+    const rotateX = `rotateX(${parseInt(-window.pitch, 10)}deg)`;
+    const rotateY = `rotateY(${parseInt(-window.yaw, 10)}deg)`;
+    const transform = `translate(-50%, -50%) ${rotateX} ${rotateY}`;
+    $('.card').css({ transform });
   }
   if (window.modeTracker === 'device') {
     document.getElementById('compass').style.display = '';
@@ -622,6 +626,7 @@ function animate() {
   }
 }
 
+// eslint-disable-next-line
 function DisplayDebug() {
   // Add debug UI here
   const modelview = document.getElementById('modelview');

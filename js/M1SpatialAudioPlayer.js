@@ -207,10 +207,12 @@ async function setupCamera() {
   } catch (e) {
     const element = document.getElementById('warning');
     let warningMessage = 'ERROR: UNABLE TO TRACK FACE!';
-    if (e.message === 'Permission denied') {
+    if (e.message.includes('denied')) {
       warningMessage = `${warningMessage} WEBCAM PERMISSION DENIED!`;
-    } else if (e.message === 'Requested device not found') {
+    } else if (e.message === 'Requested device not found' || e.message === 'The object can not be found here.') {
       warningMessage = `${warningMessage} YOUR DEVICE DOESN'T HAVE CAMERA SUPPORT!`;
+    } else {
+      warningMessage = `${warningMessage} ${e.message}`;
     }
 
     // NOTE: This is just a simple checker for the tracker mode and it should move to another space

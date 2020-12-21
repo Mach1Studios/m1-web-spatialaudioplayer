@@ -14,7 +14,9 @@
     "OSC": "readonly",
     "Stats": "readonly",
     "tf": "readonly",
-    "THREE": "readonly"
+    "THREE": "readonly",
+    "Gimbal": "readonly",
+    "$": "readonly"
   },
   "extends": [
     "airbnb-base"

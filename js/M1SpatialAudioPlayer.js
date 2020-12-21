@@ -34,7 +34,7 @@ window.controls = controls;
 const audioFiles8 = ['T1', 'T2', 'T3', 'T4', 'B5', 'B6', 'B7', 'B8'];
 const getAudioFiles = (files) => {
   const path = 'audio/m1spatial';
-  
+
   // NOTE: The new iPad now mimic to Mac OMG
   const isModernIPad = (/MacIntel/.test(navigator.platform) && 'ontouchend' in document);
   const extention = /iPhone|iPad|iPod/i.test(navigator.userAgent) || isModernIPad ? 'mp3' : 'ogg';
@@ -108,7 +108,7 @@ const getModeElement = (name) => {
   return null;
 };
 
-var gimbal = new Gimbal();
+const gimbal = new Gimbal();
 
 function selectTracker() {
   // NOTE: Clear all warning messages
@@ -122,12 +122,12 @@ function selectTracker() {
   }
 
   if (window.modeTracker === 'device') {
-    const handleDeviceOrientation = (event) => {
-	  gimbal.update();
+    const handleDeviceOrientation = () => {
+      gimbal.update();
       if (window.modeTracker === 'device') {
-        window.yaw =  gimbal.yaw * 180 / Math.PI;
-        window.pitch = gimbal.pitch * 180 / Math.PI;
-        window.roll = gimbal.roll * 180 / Math.PI;
+        window.yaw = (gimbal.yaw * 180) / Math.PI;
+        window.pitch = (gimbal.pitch * 180) / Math.PI;
+        window.roll = (gimbal.roll * 180) / Math.PI;
       }
     };
     try {
@@ -151,7 +151,7 @@ function selectTracker() {
         : '';
     }
 
-	gimbal.enable();
+    gimbal.enable();
   }
 }
 
@@ -194,21 +194,42 @@ const mobile = isMobile();
 async function setupCamera() {
   video = document.getElementById('video');
 
-  const stream = await navigator.mediaDevices.getUserMedia({
-    audio: false,
-    video: {
-      facingMode: 'user',
-      width: mobile ? undefined : 640,
-      height: mobile ? undefined : 480,
-    },
-  });
-  video.srcObject = stream;
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: false,
+      video: {
+        facingMode: 'user',
+        width: mobile ? undefined : 640,
+        height: mobile ? undefined : 480,
+      },
+    });
+    video.srcObject = stream;
+  } catch (e) {
+    const element = document.getElementById('warning');
+    let warningMessage = 'ERROR: UNABLE TO TRACK FACE!';
+    if (e.message.includes('denied')) {
+      warningMessage = `${warningMessage} WEBCAM PERMISSION DENIED!`;
+    } else if (e.message === 'Requested device not found' || e.message === 'The object can not be found here.') {
+      warningMessage = `${warningMessage} YOUR DEVICE DOESN'T HAVE CAMERA SUPPORT!`;
+    } else {
+      warningMessage = `${warningMessage} ${e.message}`;
+    }
 
-  return new Promise((resolve) => {
-    video.onloadedmetadata = () => {
-      resolve(video);
-    };
-  });
+    // NOTE: This is just a simple checker for the tracker mode and it should move to another space
+    setInterval(() => {
+      if (window.modeTracker === 'facetracker') {
+        element.innerHTML = warningMessage;
+      }
+    }, 1000);
+
+    return false;
+  }
+
+  video.onloadedmetadata = () => {
+    Promise.resolve(video);
+  };
+
+  return true;
 }
 
 async function renderPrediction() {
@@ -329,11 +350,20 @@ async function trackerMain() {
   info.innerHTML = progress.element;
   document.getElementById('main').style.display = 'none';
 
-  await Promise.all([
+  const [isSetupCamera] = await Promise.all([
+    setupCamera(),
     waitingSounds(),
     tf.ready(),
-    setupCamera(),
   ]);
+
+  // disable all camera based handlers and settings
+  if (!isSetupCamera) {
+    info.innerHTML = '';
+    document.getElementById('main').style.display = '';
+
+    // enable all mods without facetracker part
+    return null;
+  }
 
   videoWidth = video.videoWidth;
   videoHeight = video.videoHeight;
@@ -343,6 +373,10 @@ async function trackerMain() {
   canvas = document.getElementById('output');
   canvas.width = videoWidth;
   canvas.height = videoHeight;
+
+  // NOTE: This takes the first element by CSS class
+  // and after some changes on the HTML page this code can be broken
+  // FIXME: Need to use getElementsById
   const canvasContainer = document.querySelector('.canvas-wrapper');
   canvasContainer.style = `width: ${videoWidth}px; height: ${videoHeight}px`;
 
@@ -435,7 +469,7 @@ function onWindowResize() {
 }
 
 function onDocumentMouseMove(event) {
-  const rect = event.target.getBoundingClientRect();
+  // const rect = event.target.getBoundingClientRect();
   mouseX = (event.clientX) / window.innerWidth;
   mouseY = (event.clientY) / window.innerHeight;
 }
@@ -458,7 +492,7 @@ function init() {
   };
 
   const mainWindow = document.getElementById('main');
-  container = document.getElementById('modelview'); // document.createElement("div");
+  container = document.getElementById('modelview');
 
   camera = new THREE.PerspectiveCamera(27, width / height, 1, 10000);
   camera.position.z = 2500;
@@ -538,7 +572,11 @@ function animate() {
     if (touchStats.style.display === 'none') {
       touchStats.style.display = '';
     }
-    $(".card").css({'transform' : 'translate(-50%, -50%) rotateY('+parseInt(-window.yaw)+'deg) rotateX('+parseInt(-window.pitch)+'deg)'});
+
+    const rotateX = `rotateX(${parseInt(-window.pitch, 10)}deg)`;
+    const rotateY = `rotateY(${parseInt(-window.yaw, 10)}deg)`;
+    const transform = `translate(-50%, -50%) ${rotateX} ${rotateY}`;
+    $('.card').css({ transform });
   }
   if (window.modeTracker === 'device') {
     document.getElementById('compass').style.display = '';
@@ -622,6 +660,7 @@ function animate() {
   }
 }
 
+// eslint-disable-next-line
 function DisplayDebug() {
   // Add debug UI here
   const modelview = document.getElementById('modelview');

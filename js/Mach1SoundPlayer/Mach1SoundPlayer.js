@@ -16,10 +16,12 @@ class Mach1SoundPlayer { // eslint-disable-line no-unused-vars
 
   #buffer
 
-  #gainNode;
-  #gains;
-  #pannerNode;
-  #smp;
+  #volume = 1.0
+
+  #gainNode
+  #gains
+  #pannerNode
+  #smp
 
   #cache = {}
   audioContext = (window.AudioContext) ? new window.AudioContext() : new window.webkitAudioContext()
@@ -53,7 +55,7 @@ class Mach1SoundPlayer { // eslint-disable-line no-unused-vars
   #setGains = () => {
     if (this.isReady() && this.#isPlaying) {
       for (let i = 0; i < this.#smp.length; i += 1) {
-        this.#gainNode[i].gain.setTargetAtTime(this.#gains[i], this.audioContext.currentTime, 0.05);
+        this.#gainNode[i].gain.setTargetAtTime(this.#gains[i] * this.#volume, this.audioContext.currentTime, 0.05);
       }
     }
   }
@@ -173,6 +175,22 @@ class Mach1SoundPlayer { // eslint-disable-line no-unused-vars
    */
   get gains() {
     return this.#gains;
+  }
+
+ /**
+   * Setting Master Gain/Volume
+   * @param  {Array} volume
+   */
+  set volume(vol) {
+    this.#volume = parseFloat(vol);
+  }
+  
+  /**
+   * Return Master Gain/Volume
+   * @return {String} Volume from 0 to 1 as a float
+   */
+  get volume() {
+    return this.#volume;
   }
 
   /**

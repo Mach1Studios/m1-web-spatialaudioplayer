@@ -44,7 +44,8 @@ const getAudioFiles = (files) => {
 
 const Player = new Mach1SoundPlayer(getAudioFiles(audioFiles8));
 const DecodeModule = new Mach1DecodeModule();
-const osc = new OSC();
+const oscSend = new OSC();
+// const oscReceive = new OSC();
 
 tf.setBackend('webgl');
 
@@ -427,9 +428,12 @@ function Decode(yaw, pitch, roll) {
 
 // ------------------------
 // OSC Handling
-osc.open({
+oscSend.open({
   port: 9898
 });
+// oscReceive.open({
+//   port: 57121
+// });
 
 // ------------------------
 // Visual rendering adopted from https://threejs.org/examples/webgl_materials_normalmap.html
@@ -627,6 +631,18 @@ function animate() {
       touchStats.style.display = 'none';
     }
   }
+  if (window.modeTracker === 'oscinput') {
+    document.getElementById('compass').style.display = '';
+    if (videoOutput.style.display === '') {
+      videoOutput.style.display = 'none';
+    }
+    if (bosearStats.style.display === '') {
+      bosearStats.style.display = 'none';
+    }
+    if (touchStats.style.display === '') {
+      touchStats.style.display = 'none';
+    }
+  }
 
   render();
   stats.update();
@@ -642,7 +658,7 @@ function animate() {
 
   // Check and reconnect OSC
   // Apply orientation as output OSC messages
-  if (osc.status() === OSC.STATUS.IS_OPEN) {
+  if (oscSend.status() === OSC.STATUS.IS_OPEN) {
     /**
      * Receive OSC message with address "/orientation" and three float arguements
      * Yaw (left -> right | where rotating left is negative)
@@ -651,13 +667,16 @@ function animate() {
      *
      * @type {Class}
      */
-    osc.send(new OSC.Message('/orientation', yaw, pitch, roll));
-  } else if (osc.status() === OSC.STATUS.IS_CLOSED) {
-    osc.open({
+    oscSend.send(new OSC.Message('/orientation', yaw, pitch, roll));
+  } else if (oscSend.status() === OSC.STATUS.IS_CLOSED) {
+    oscSend.open({
       // TODO: custom port output
       port: 9898
     });
   }
+  // oscReceive.on("message", function (oscMsg) {
+  //   console.log("Message Received", oscMsg);
+  // });
 }
 
 // eslint-disable-next-line

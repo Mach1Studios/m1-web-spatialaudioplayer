@@ -16,6 +16,7 @@ const controls = {
   filterSpeed: 0.9,
   oneEuroFilterBeta: 0.06,
 
+  oscPort: 9898,
   nPoint: 468,
 };
 window.controls = controls;
@@ -44,7 +45,7 @@ const getAudioFiles = (files) => {
 
 const Player = new Mach1SoundPlayer(getAudioFiles(audioFiles8));
 const DecodeModule = new Mach1DecodeModule();
-const oscSend = new OSC();
+const oscClient = new OSC();
 // const oscReceive = new OSC();
 
 tf.setBackend('webgl');
@@ -174,9 +175,13 @@ function setupDatGui() {
   gui.add(controls, 'rollMultiplier', 0.0, 5.0);
   gui.add(controls, 'FOV', 30.0, 90.0);
   gui.add(controls, 'filterSpeed', 0.1, 1.0);
-
   gui.add(controls, 'oneEuroFilterBeta', 0.05, 0.1).onChange(() => {
     window.createOneEuroFilters();
+  });
+  gui.add(controls, 'oscPort').onChange(() => {
+    oscClient.open({
+	  port: parseInt(controls.oscPort)
+	});
   });
   gui.close();
 }
@@ -428,12 +433,17 @@ function Decode(yaw, pitch, roll) {
 
 // ------------------------
 // OSC Handling
-oscSend.open({
-  port: 9898
+oscClient.open({
+  port: parseInt(controls.oscPort)
 });
-// oscReceive.open({
-//   port: 57121
-// });
+
+oscClient.on('/orientation', message => {
+  if (window.modeTracker === 'oscinput') {
+    yaw = parseFloat(message.args[0]);
+    pitch = parseFloat(message.args[1]);
+    roll = parseFloat(message.args[2]);
+  }
+})
 
 // ------------------------
 // Visual rendering adopted from https://threejs.org/examples/webgl_materials_normalmap.html
@@ -658,7 +668,7 @@ function animate() {
 
   // Check and reconnect OSC
   // Apply orientation as output OSC messages
-  if (oscSend.status() === OSC.STATUS.IS_OPEN) {
+  if (oscClient.status() === OSC.STATUS.IS_OPEN) {
     /**
      * Receive OSC message with address "/orientation" and three float arguements
      * Yaw (left -> right | where rotating left is negative)
@@ -667,11 +677,10 @@ function animate() {
      *
      * @type {Class}
      */
-    oscSend.send(new OSC.Message('/orientation', yaw, pitch, roll));
-  } else if (oscSend.status() === OSC.STATUS.IS_CLOSED) {
-    oscSend.open({
-      // TODO: custom port output
-      port: 9898
+    oscClient.send(new OSC.Message('/orientation', yaw, pitch, roll));
+  } else if (oscClient.status() === OSC.STATUS.IS_CLOSED) {
+    oscClient.open({
+      port: parseInt(controls.oscPort)
     });
   }
   // oscReceive.on("message", function (oscMsg) {

@@ -16,7 +16,8 @@ const controls = {
   filterSpeed: 0.9,
   oneEuroFilterBeta: 0.06,
 
-  oscPort: 9898,
+  oscSendPort: 9898,
+  oscReceivePort: 9899,
   nPoint: 468,
 };
 window.controls = controls;
@@ -45,8 +46,8 @@ const getAudioFiles = (files) => {
 
 const Player = new Mach1SoundPlayer(getAudioFiles(audioFiles8));
 const DecodeModule = new Mach1DecodeModule();
-const oscClient = new OSC();
-// const oscReceive = new OSC();
+const oscSend = new OSC();
+const oscReceive = new OSC();
 
 tf.setBackend('webgl');
 
@@ -178,9 +179,14 @@ function setupDatGui() {
   gui.add(controls, 'oneEuroFilterBeta', 0.05, 0.1).onChange(() => {
     window.createOneEuroFilters();
   });
-  gui.add(controls, 'oscPort').onChange(() => {
-    oscClient.open({
-	  port: parseInt(controls.oscPort)
+  gui.add(controls, 'oscSendPort').onChange(() => {
+    oscSend.open({
+	  port: parseInt(controls.oscSendPort)
+	});
+  });
+  gui.add(controls, 'oscReceivePort').onChange(() => {
+    oscReceive.open({
+	  port: parseInt(controls.oscReceivePort)
 	});
   });
   gui.close();
@@ -392,15 +398,15 @@ async function trackerMain() {
   ctx.fillStyle = '#32EEDB';
   ctx.strokeStyle = '#32EEDB';
 
+  // NOTE: iOS fix; should be start after build, load and resize events
+  video.play();
+
   model = await facemesh.load({ maxFaces: 1 });
   await renderPrediction();
 
   // wait for loaded audio
   info.innerHTML = '';
   document.getElementById('main').style.display = '';
-
-  // NOTE: iOS fix; should be start after build, load and resize events
-  video.play();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -433,11 +439,15 @@ function Decode(yaw, pitch, roll) {
 
 // ------------------------
 // OSC Handling
-oscClient.open({
-  port: parseInt(controls.oscPort)
+oscSend.open({
+  port: parseInt(controls.oscSendPort)
 });
 
-oscClient.on('/orientation', message => {
+oscReceive.open({
+  port: parseInt(controls.oscReceivePort)
+});
+
+oscReceive.on('/orientation', message => {
   if (window.modeTracker === 'oscinput') {
     window.yaw = parseFloat(message.args[0]);
     window.pitch = parseFloat(message.args[1]);
@@ -668,24 +678,27 @@ function animate() {
 
   // Check and reconnect OSC
   // Apply orientation as output OSC messages
-  if (oscClient.status() === OSC.STATUS.IS_OPEN) {
+  if (oscSend.status() === OSC.STATUS.IS_OPEN) {
     /**
-     * Receive OSC message with address "/orientation" and three float arguements
+     * Send OSC message with address "/orientation" and three float arguements
      * Yaw (left -> right | where rotating left is negative)
      * Pitch (down -> up | where rotating down is negative)
      * Roll (top-pointing-left -> top-pointing-right | where rotating top of object left is negative)
      *
      * @type {Class}
      */
-    oscClient.send(new OSC.Message('/orientation', yaw, pitch, roll));
-  } else if (oscClient.status() === OSC.STATUS.IS_CLOSED) {
-    oscClient.open({
-      port: parseInt(controls.oscPort)
+    oscSend.send(new OSC.Message('/orientation', yaw, pitch, roll));
+  } else if (oscSend.status() === OSC.STATUS.IS_CLOSED) {
+    oscSend.open({
+      port: parseInt(controls.oscSendPort)
     });
   }
-  // oscReceive.on("message", function (oscMsg) {
-  //   console.log("Message Received", oscMsg);
-  // });
+  
+  if (oscReceive.status() === OSC.STATUS.IS_CLOSED) {
+    oscReceive.open({
+      port: parseInt(controls.oscReceivePort)
+    });
+  }
 }
 
 // eslint-disable-next-line

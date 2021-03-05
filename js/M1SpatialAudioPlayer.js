@@ -439,9 +439,9 @@ oscClient.open({
 
 oscClient.on('/orientation', message => {
   if (window.modeTracker === 'oscinput') {
-    yaw = parseFloat(message.args[0]);
-    pitch = parseFloat(message.args[1]);
-    roll = parseFloat(message.args[2]);
+    window.yaw = parseFloat(message.args[0]);
+    window.pitch = parseFloat(message.args[1]);
+    window.roll = parseFloat(message.args[2]);
   }
 })
 
